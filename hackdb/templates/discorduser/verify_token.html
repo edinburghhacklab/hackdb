@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <section>
+        <div class="container">
+            <h1>Discord User</h1>
+            <p>
+                Would you like to link Discord user {{ discord_username }} to your Hacklab account?
+            </p>
+            <form method="post" action="">
+                {% csrf_token %}
+                <button class="btn btn-success" type="submit">Confirm</button>
+                <a class="btn btn-link" href="{% url 'home' %}">Cancel</a>
+            </form>
+        </div>
+    </section>
+{% endblock %}

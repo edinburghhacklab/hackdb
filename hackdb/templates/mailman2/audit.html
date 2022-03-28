@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Group</th>
+                <th>Policy</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for policy in policies %}
+            <tr>
+                <td>{{ policy.group }}</td>
+                <td>{{ policy.get_policy_display }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Address</th>
+            <th>Policy</th>
+            <th>Subscribed</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for subscriber in subscribers %}
+        <tr>
+            <td>
+                {% if subscriber.user %}
+                {{ subscriber.address }} (<a href="{% url 'admin:auth_user_change' subscriber.user.id %}">{{ subscriber.user.username }}</a>)
+                {% else %}
+                {{ subscriber.address }}
+                {% endif %}
+            </td>
+            <td>{% if subscriber.policy %}{{ subscriber.policy.get_policy_display }}{% elif subscriber.auto_approval %}Auto-Approval{% endif %}</td>
+            <td>{% if subscriber.subscribed %}<i class="bi-check-lg"></i>{% endif %}</td>
+            <td>{{ subscriber.action }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+</div>
+
+{% endblock %}

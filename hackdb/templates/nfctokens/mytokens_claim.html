@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section>
+  <div class="container">
+    {% if tokens %}
+    <p>
+      Select your new token or card from the list below. If you don't see it
+      or aren't sure then swipe wipe your new token on one of the doors, and
+      select <em>Refresh</em>.
+    </p>
+    <table class="table table-striped">
+      <tr>
+        <th>Time</th>
+        <th>UID</th>
+      </tr>
+      {% for token in tokens %}
+        <tr>
+          <td>{{ token.last_seen|time:"H:i:s" }}</td>
+          <td><a href="{% url 'mytokens_add_uid' token.uid %}">{{ token.uid }}</a></td>
+        </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p>Swipe your new token or card on one of the doors, then select <em>Refresh</em>.</p>
+    {% endif %}
+    <a href=""><button class="btn btn-secondary">Refresh</button></a>
+    <a href="{% url 'mytokens_add' %}"><button class="btn btn-secondary">Enter Manually</button></a>
+    <a href="{% url 'mytokens' %}" class="btn btn-secondary" role="button">Cancel</a>
+  </div>
+</section>
+{% endblock %}

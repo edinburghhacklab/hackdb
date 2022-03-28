@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block content %}
+<section>
+  <div class="container">
+    <h1>Members</h1>
+    <table class="table table-striped">
+      <tr>
+        <th>Name</th>
+        <th></th>
+      </tr>
+      {% for user in users %}
+        <tr>
+          <td>{{ user.member.real_name }}</td>
+          <td>
+              {% for term in user.membershipterm_set.all %}
+                {{ term.start}} to {{ term.end }}
+              {% endfor %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="container">
+    <a href="{% url 'home' %}"><button class="btn btn-secondary">Home</button></a>
+  </div>
+</section>
+
+{% endblock %}

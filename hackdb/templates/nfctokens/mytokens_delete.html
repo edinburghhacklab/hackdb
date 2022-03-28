@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block content %}
+<section>
+  <div class="container">
+    <h1>Delete token?</h1>
+    <table class="table table-striped">
+      <tr>
+        <th>UID</th>
+        <th>Description</th>
+        <th>Last Used</th>
+        <th>Enabled</th>
+      </tr>
+      <tr>
+        <td>{{ token.uid }}</td>
+        <td>
+          {% if token.description %}
+          {{ token.description }}
+          {% else %}
+          (no description)
+          {% endif %}
+        </td>
+        <td>{{ token.last_seen|naturaltime }}</td>
+        <td>
+          {% if token.enabled %}
+          <i class="glyphicon glyphicon-ok"></i>
+          {% else %}
+          <i class="glyphicon glyphicon-remove"></i>
+          {% endif %}
+        </td>
+      </tr>
+    </table>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Delete</button>
+        <a href="{% url 'mytokens' %}" class="btn btn-secondary" role="button">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

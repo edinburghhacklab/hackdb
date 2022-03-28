@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{{ prompts }}
+
+<div class="container">
+  <h1>Mailing Lists</h1>
+
+  <p>Subscriptions for: {% for address in verified_addresses %} {{ address.email }}{% endfor %}</p>
+
+  <table class="table table-sm table-striped">
+    <thead>
+      <tr>
+        <th>List</th>
+        <th>Description</th>
+        <th>Subscribed</th>
+        <th>Address</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+        {% for l in mailinglists %}
+          {% if l.subscriptions %}
+            {% for subscription in l.subscriptions %}
+              <tr>
+                {% if subscription.row == 0 %}
+                  <td>{{ l.name }}{% if l.recommended %} <i class="bi-star-fill" style="color:orange" data-toggle="tooltip" title="Recommended!"></i>{% endif %}</td>
+                  <td data-toggle="tooltip" title="{{ l.description }}">{{ l.description|truncatewords:6 }}</td>
+                {% else %}
+                  <td></td>
+                  <td></td>
+                {% endif %}
+                <td>
+                  <i class="bi-check-lg"></i>
+                  {% if subscription.delivery_status == 2 %}{# BYUSER #}
+                  <span data-toggle="tooltip" title="You are subscribed but have disabled mail delivery.">(no mail)</span>
+                  {% elif subscription.delivery_status == 3 %}{# BYADMIN #}
+                  <span data-toggle="tooltip" title="You are subscribed but the administrator has disabled mail delivery for you.">(no mail)</span>
+                  {% elif subscription.delivery_status == 4 %}{# BYBOUNCE #}
+                  <span data-toggle="tooltip" title="Your mail has been bouncing so delivery has been disabled.">(bouncing)</span>
+                  {% endif %}
+                </td>
+                <td>{{ subscription.email }}</td>
+                <td>
+                  {% if l.archive_private %}
+                    <form method="POST" action="{{ mailman_url }}/mailman/private/{{ l.name }}/" style="display: inline">
+                      <input type="hidden" name="username" value="{{ subscription.email }}" />
+                      <input type="hidden" name="password" value="{{ subscription.password }}" />
+                      <button type="submit" class="btn btn-sm btn-light">archives</button>
+                    </form>
+                  {% else %}
+                    <form method="POST" action="{{ mailman_url }}/mailman/pipermail/{{ l.name }}/" style="display: inline">
+                      <button type="submit" class="btn btn-sm btn-light">archives</button>
+                    </form>
+                  {% endif %}
+                  <form method="POST" action="{{ mailman_url }}/mailman/options/{{ l.name }}" style="display: inline">
+                    <input type="hidden" name="email" value="{{ subscription.email }}" />
+                    <input type="hidden" name="password" value="{{ subscription.password }}" />
+                    <button type="submit" class="btn btn-sm btn-light">options</button>
+                  </form>
+                  <form method="POST" action="{% url 'mailman2_unsubscribe' l.name subscription.email %}" style="display: inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-light">unsubscribe</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td>{{ l.name }}{% if l.recommended %} <i class="bi-star-fill" style="color:orange" data-toggle="tooltip" title="Recommended!"></i>{% endif %}</td>
+              <td data-toggle="tooltip" title="{{ l.description }}">{{ l.description|truncatewords:6 }}</td>
+              <td></td>
+              <td></td>
+              <td>
+                {% if advanced_mode %}
+                <div class="dropdown">
+                  <a class="btn btn-sm btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">subscribe</a>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    {% for address in verified_addresses %}
+                      <li>
+                        <form method="POST" action="{% url 'mailman2_subscribe' l.name address.email %}" style="display: inline">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-link dropdown-item">{{ address }}</button>
+                        </form>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                {% else %}
+                <form method="POST" action="{% url 'mailman2_subscribe' l.name verified_address.email %}" style="display: inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-light">subscribe</button>
+                </form>
+                {% endif %}
+                {% if not l.archive_private %}
+                <form method="POST" action="{{ mailman_url }}/mailman/pipermail/{{ l.name }}/" style="display: inline">
+                  <button type="submit" class="btn btn-sm btn-light">archives</button>
+                </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+
+{% endblock %}

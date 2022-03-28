@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+<section>
+  <div class="container">
+    <h1>Access Tokens</h1>
+    {% if tokens %}
+    <p>You have the following access tokens assigned to your account:</p>
+    <table class="table table-striped">
+      <tr>
+        <th>UID</th>
+        <th>Description</th>
+        <th>Last Used</th>
+        <th>Enabled</th>
+        <th>Delete</th>
+      </tr>
+      {% for token in tokens %}
+        {% if token.enabled %}
+        <tr>
+        {% else %}
+        <tr class="text-muted">
+        {% endif %}
+          <td>{{ token.uid }}</td>
+          <td>
+            {% if token.description %}
+            <a href="{% url 'mytokens_edit' token.uid %}">{{ token.description }}</a>
+            {% else %}
+            <a href="{% url 'mytokens_edit' token.uid %}">(no description)</a>
+            {% endif %}
+          </td>
+          <td><span data-bs-toggle="tooltip" title="{{ token.last_seen }}">{{ token.last_seen|naturaltime }}</span></td>
+          {% if token.enabled %}
+          <td>
+            <form method="POST" action="{% url 'mytokens_disable' token.uid %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-xs btn-link py-0"><i class="bi-toggle-on"></i></button>
+            </form>
+          </td>
+          {% else %}
+          <td>
+            <form method="POST" action="{% url 'mytokens_enable' token.uid %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-xs btn-link py-0"><i class="bi-toggle-off" style="color:grey"></i></button>
+            </form>
+          </td>
+          {% endif %}
+          <td>
+            <a href="{% url 'mytokens_delete' token.uid %}"><i class="bi-trash" style="color:black"></i></a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p>You have no access tokens assigned to your account.</p>
+    {% endif %}
+  </div>
+  <div class="container">
+    <a href="{% url 'mytokens_claim' %}"><button class="btn btn-secondary">Add Token</button></a>
+    <a href="{% url 'mytokenlogs' %}"><button class="btn btn-secondary">View Logs</button></a>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% load account %}
+
+{% block content %}
+
+{% for motd in motd_messages.all %}
+<div class="alert alert-info">{% autoescape off %}{{ motd.message }}{% endautoescape %}</div>
+{% endfor %}
+
+{% if show_verify_email_prompt %}
+<p class="alert alert-warning">Please remember to <a href="{% url 'emailverification' %}">verify your email</a>.</p>
+{% endif %}
+
+{% for prompt in mailman2_prompts %}
+<div class="alert alert-warning">
+<p>{{ prompt.message }}</p>
+  <form method="POST" action="{% url 'mailman2_subscribe_primary' prompt.list_name %}" style="display: inline">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-sm btn-outline-secondary">subscribe to {{ prompt.list_name }}</button>
+  </form>
+</div>
+{% endfor %}
+
+<div class="container">
+  {% if user.is_authenticated %}
+    {% url "account_settings" as settings_url %}
+    <h1>Hi {% user_display user %}!</h1>
+    <p>
+      <nav>
+        <ul>
+          <li><a href="{% url 'account_change_password' %}">change your password</a></li>
+          <li><a href="{% url 'account_email' %}">change your email address</a></li>
+          <li><a href="{% url 'socialaccount_connections' %}">manage your social accounts</a></li>
+          <li><a href="{% url 'membership_overview' %}">view your membership status</a></li>
+          <li><a href="{% url 'mailman2_overview' %}">manage your mailing list subscriptions</a></li>
+          <li><a href="{% url 'myprofile' %}">edit your profile</a></li>
+          <li><a href="{% url 'mytokens' %}">configure your access tokens</a></li>
+          <li><a href="{% url 'posixusers_sshkeys' %}">configure your SSH keys</a></li>
+          <li><a href="{% url 'groupadmin_list' %}">view your group memberships</a></li>
+        </ul>
+      </nav>
+    </p>
+  {% else %}
+    <h1>Hello!</h1>
+    <p>
+      This is where you can <a href="{% url 'account_signup' %}" class="btn btn-secondary">Sign up</a> for an account to access
+      Hacklab web services.
+    </p>
+    <p>
+      If you already have an account you can
+      <a href="{% url 'account_login' %}" class="btn btn-secondary">Log in</a> to
+      edit your details.
+    </p>
+  {% endif %}
+</div>
+
+{% endblock %}

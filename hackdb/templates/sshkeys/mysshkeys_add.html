@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% load django_bootstrap5 %}
+
+{% block content %}
+<section>
+  <div class="container">
+    <form method="post" action="">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Add</button>
+        <a href="{% url 'mysshkeys' %}" class="btn btn-default" role="button">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

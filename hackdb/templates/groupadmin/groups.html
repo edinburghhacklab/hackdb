@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block content %}
+
+<div class="container">
+  <h1>Groups</h1>
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th>Group</th>
+        <th>Description</th>
+        <th>Member</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for group in groups %}
+      <tr>
+        <td>{{ group.object.name }}</td>
+        <td>{{ group.object.properties.description }}</td>
+        <td>{% if group.member %}<i class="bi-check-lg" data-bs-toggle="tooltip" title="You are a member of this group."></i>{% endif %}</td>
+        <td>
+          {% if group.owner %}
+          <a href="{% url 'groupadmin_view' group.object.name %}" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="You are an owner of this group.">admin</a>
+          {% endif %}
+          {% if group.object.properties.self_service %}
+          {% if group.member %}
+          <form method="POST" action="{% url 'groupadmin_leave' group.object.name %}" style="display: inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="This is a self-service list.">leave</button>
+          </form>
+          {% else %}
+          <form method="POST" action="{% url 'groupadmin_join' group.object.name %}" style="display: inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="This is a self-service list.">join</button>
+          </form>
+          {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

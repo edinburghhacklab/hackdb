@@ -1,0 +1,2 @@
+DEBUG = True
+SECRET_KEY = "change-this-to-a-random-string"

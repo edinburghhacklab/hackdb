@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+  <h1>Discord User</h1>
+  <p>Would you like to link Discord user {{ discord_username }} to your account?</p>
+  <form method="post" action="">
+    {% csrf_token %}
+    <button type="submit">Confirm</button>
+  </form>
+</div>
+
+{% endblock %}

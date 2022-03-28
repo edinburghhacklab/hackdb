@@ -1,0 +1,11 @@
+{% for list_name, message in prompts %}
+<div class="alert alert-warning">
+  <p>{{ message }}</p>
+  <p>
+    <form method="POST" action="{% url 'mailman2_subscribe_primary' list_name %}" style="display: inline">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-xs">subscribe to {{ list_name }}</button>
+    </form>
+  </p>
+</div>
+{% endfor %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% load django_bootstrap5 %}
+
+{% block content %}
+<section>
+  <div class="container">
+    <form method="post" action="{{ url 'nfc_token_auth' }}">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Authenticate</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

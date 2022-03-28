@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block content %}
+<section>
+  <div class="container">
+    <h1>Token Access Logs</h1>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Type</th>
+          <th>Location</th>
+          <th>UID</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for token in tokens %}
+        <tr>
+          <td>{{ token.timestamp }}</td>
+          <td>{{ token.ltype }}</td>
+          <td>{{ token.location }}</td>
+          <td>{{ token.uid }}</td>
+          <td>{{ token.token_description }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% endblock %}

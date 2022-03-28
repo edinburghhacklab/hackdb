@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<div class="container">
+  <h1>Membership</h1>
+  <p>
+  {% if request.user.member.is_member %}
+  You are a member.
+  {% else %}
+  You are not a member.
+  {% endif %}
+  </p>
+
+  <table class="table table-striped">
+    <thead>
+      <th>Start</th>
+      <th>End</th>
+      <th>Type</th>
+    </thead>
+    <tbody>
+      {% for term in user.membershipterm_set.all|dictsort:'start' %}
+      <tr>
+        <td>{{ term.start }}</td>
+        <td>{{ term.end|default_if_none:'' }}</td>
+        <td>{{ term.get_mtype_display }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
