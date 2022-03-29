@@ -10,7 +10,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.template.loader import get_template
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
@@ -18,6 +17,7 @@ from . import mailmanapi
 from .models import GroupPolicy, MailingList
 from .utils import (
     audit_list,
+    auto_load_lists,
     load_lists,
     user_can_see,
     user_can_subscribe,
@@ -43,6 +43,8 @@ class AddressChangeForm(forms.Form):
 @login_required
 @verified_email_required
 def overview(request):
+    auto_load_lists()
+
     verified_addresses = EmailAddress.objects.filter(
         user=request.user, verified=True
     ).order_by("-primary")

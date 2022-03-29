@@ -4,9 +4,16 @@
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 
 from . import mailmanapi
 from .models import ChangeOfAddress, GroupPolicy, MailingList
+
+
+def auto_load_lists():
+    if cache.get("mailman2.lists_loaded") is None:
+        print("mailman2: auto-retrieving lists from Mailman")
+        load_lists()
 
 
 def load_lists():
@@ -29,6 +36,8 @@ def load_lists():
     for mailing_list in MailingList.objects.all():
         if mailing_list.name not in seen:
             mailing_list.delete()
+
+    cache.set("mailman2.lists_loaded", True, timeout=3600)
 
 
 def user_can_subscribe(user, mailing_list):
