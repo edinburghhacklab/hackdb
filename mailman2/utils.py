@@ -118,14 +118,15 @@ def audit_list(mailing_list):
             for address in verified_addresses:
                 email = address.email.lower()
                 # print(f"user_subscribe_policy {mailing_list} {user} -> {policy}")
-                is_subscribed = email in mailman_subscribers
+                address_is_subscribed = email in mailman_subscribers
                 subscribers[email] = {
                     "user": user,
                     "address": email,
-                    "subscribed": is_subscribed,
+                    "subscribed": address_is_subscribed,
                     "policy": policy,
                 }
-                is_subscribed = True
+                if address_is_subscribed:
+                    user_is_subscribed = True
             if (
                 policy.policy == GroupPolicy.FORCE
                 and not user_is_subscribed
