@@ -150,7 +150,7 @@ def mytokens_disable(request, uid):
 @user_passes_test(can_configure_tokens)
 def mytokenlogs(request):
     context = {
-        "tokens": request.user.tokenlog_set.all().order_by("-timestamp"),
+        "tokens": request.user.nfctokenlogs.all().order_by("-timestamp"),
     }
     return render(request, "nfctokens/mytokenlogs.html", context)
 
