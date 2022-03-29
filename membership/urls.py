@@ -10,4 +10,5 @@ urlpatterns = [
     path("", views.overview, name="membership_overview"),
     path("myprofile", views.myprofile, name="myprofile"),
     path("register", views.show_register, name="show_register"),
+    path("api/member_count", views.member_count, name="member_count"),
 ]

@@ -5,8 +5,8 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
-from django.forms import ModelForm, ValidationError
-from django.http import HttpResponseRedirect
+from django.forms import ModelForm
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -84,3 +84,11 @@ def show_register(request):
 @login_required
 def overview(request):
     return render(request, "membership/overview.html")
+
+
+def member_count(request):
+    count = 0
+    for user in get_user_model().objects.all():
+        if user.member.is_member():
+            count = count + 1
+    return JsonResponse({"members": count})
