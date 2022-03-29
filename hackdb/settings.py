@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "hackdb",
     "apikeys",
+    "datarequest",
     "discorduser",
     "groupadmin",
     "ldapsync",

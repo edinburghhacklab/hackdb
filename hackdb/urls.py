@@ -13,6 +13,7 @@ urlpatterns = [
     ),
     path("accounts/", include("allauth.urls")),
     path("admin/", admin.site.urls),
+    path("datarequest/", include("datarequest.urls")),
     path("discord/", include("discorduser.urls")),
     path("groups/", include("groupadmin.urls")),
     path("mailinglists/", include("mailman2.urls")),

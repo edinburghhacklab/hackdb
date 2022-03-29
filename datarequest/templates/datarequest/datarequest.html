@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Personal Data</h1>
+
+<p>You may download a copy of your personal data in JSON format.</p>
+
+<a href="{% url 'datarequest_download' %}">Download</a>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>Personal Data</h1>
+
+    <p>You may download a copy of your personal data in JSON format.</p>
+
+    <a class="btn btn-primary" href="{% url 'datarequest_download' %}">Download</a>
+
+</div>
+
+{% endblock %}

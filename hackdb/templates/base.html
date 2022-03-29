@@ -32,6 +32,7 @@
             <li><a class="dropdown-item" href="{% url 'account_change_password' %}">Change password</a></li>
             <li><a class="dropdown-item" href="{% url 'account_email' %}">Change email address</a></li>
             <li><a class="dropdown-item" href="{% url 'socialaccount_connections' %}">Account connections</a></li>
+            <li><a class="dropdown-item" href="{% url 'datarequest' %}">Download personal data</a></li>
             {% if user.is_staff %}
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi-gear"></i> Admin</a>
