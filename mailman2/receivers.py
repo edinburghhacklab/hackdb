@@ -3,17 +3,27 @@
 # SPDX-License-Identifier: MIT
 
 import allauth.account.signals
+from django.contrib import messages
 from django.dispatch import receiver
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 
-from .utils import change_address
+from .utils import global_change_address
 
-# FIXME: should we follow the primary address?
-# how do we tell if the user wants all subscriptions the same
-# or difference addresses per subscription?
-#
-# @receiver(allauth.account.signals.email_changed)
-# def email_changed(request, user, from_email_address, to_email_address):
-#     pass
+
+@receiver(allauth.account.signals.email_changed)
+def email_changed(request, user, from_email_address, to_email_address, **kwargs):
+    if user.mailmanuser.advanced_mode:
+        overview_url = reverse("mailman2_overview")
+        messages.add_message(
+            request,
+            messages.WARNING,
+            mark_safe(
+                f"You may wish to <a href='{overview_url}'>update</a> your mailing list subscriptions."
+            ),
+        )
+        return
+    global_change_address(user, from_email_address.email, to_email_address.email)
 
 
 @receiver(allauth.account.signals.email_removed)
@@ -24,4 +34,4 @@ def email_removed(request, user, email_address, **kwargs):
         user.emailaddress_set.filter(verified=True).order_by("-primary").first()
     )
     if new_address:
-        change_address(user, email_address, new_address.email)
+        global_change_address(user, email_address, new_address.email)

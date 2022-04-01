@@ -4,10 +4,19 @@
 
 import re
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
+
+
+def find_user_from_address(address):
+    try:
+        emailaddress = EmailAddress.objects.get(email=address, verified=True)
+        return emailaddress.user
+    except EmailAddress.DoesNotExist:
+        return None
 
 
 class MailingList(models.Model):
@@ -43,6 +52,61 @@ class MailingList(models.Model):
                 if re.match(pattern, address):
                     return True
             elif pattern.lower() == address.lower():
+                return True
+        return False
+
+    def user_can_see(self, user):
+        if self.advertised:
+            return True
+        if self.user_can_subscribe(user):
+            return True
+        return False
+
+    def user_can_subscribe(self, user):
+        if self.subscribe_policy in [self.NONE, self.CONFIRM]:
+            return True
+        for group in user.groups.all():
+            if self.group_policies.filter(group=group).exists():
+                return True
+        # if self.check_subscribe_auto_approval(user.email):
+        #     return True
+        return False
+
+    def user_recommend(self, user):
+        for group in user.groups.all():
+            if self.group_policies.filter(
+                group=group, policy__gte=GroupPolicy.RECOMMEND
+            ).exists():
+                return True
+
+    def user_prompt(self, user):
+        for group in user.groups.all():
+            try:
+                return self.group_policies.get(
+                    group=group, policy=GroupPolicy.PROMPT
+                ).prompt
+            except GroupPolicy.DoesNotExist:
+                pass
+
+    def user_subscribe_policy(self, user):
+        best = None
+        for group in user.groups.all():
+            for policy in self.group_policies.filter(group=group):
+                if best is None:
+                    best = policy
+                else:
+                    if policy.policy > best.policy:
+                        best = policy
+        return best
+
+    def address_can_remain(self, address):
+        if not self.auto_unsubscribe:
+            return True
+        if self.check_subscribe_auto_approval(address):
+            return True
+        user = find_user_from_address(address)
+        if user:
+            if self.user_can_subscribe(user):
                 return True
         return False
 
@@ -91,3 +155,8 @@ class ChangeOfAddress(models.Model):
 
     class Meta:
         verbose_name_plural = "Changes of address"
+
+
+class MailmanUser(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+    advanced_mode = models.BooleanField(default=False)

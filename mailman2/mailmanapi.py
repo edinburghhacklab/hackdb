@@ -86,7 +86,19 @@ def unsubscribe(list_name, email):
         return False
 
 
-def change_address(old_address, new_address):
+def change_address(list_name, old_address, new_address):
+    response = requests.patch(
+        f"{settings.MAILMAN_API_URL}/lists/{list_name}/members/{old_address}",
+        auth=(settings.MAILMAN_API_USERNAME, settings.MAILMAN_API_PASSWORD),
+        json={"address": new_address},
+    )
+    if response and response.status_code == 200:
+        return True
+    else:
+        return False
+
+
+def global_change_address(old_address, new_address):
     response = requests.post(
         f"{settings.MAILMAN_API_URL}/members/{old_address}/change_address",
         auth=(settings.MAILMAN_API_USERNAME, settings.MAILMAN_API_PASSWORD),

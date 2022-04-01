@@ -7,16 +7,13 @@
 <div class="container">
   <h1>Mailing Lists</h1>
 
-  <p>Subscriptions for: {% for address in verified_addresses %} {{ address.email }}{% endfor %}</p>
-
   <table class="table table-sm table-striped align-middle">
     <thead>
       <tr>
         <th>List</th>
         <th>Description</th>
-        <th>Subscribed</th>
-        <th>Address</th>
-        <th>Actions</th>
+        <th>Subscribe</th>
+        <th></th>
       </tr>
       </thead>
       <tbody>
@@ -32,7 +29,10 @@
                   <td></td>
                 {% endif %}
                 <td>
-                  <i class="bi-check-lg"></i>
+                  <form method="POST" action="{% url 'mailman2_unsubscribe' l.name subscription.email %}" style="display: inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-text py-1"><i class="bi-toggle-on"></i></button>
+                  </form>
                   {% if subscription.delivery_status == 2 %}{# BYUSER #}
                   <span data-toggle="tooltip" title="You are subscribed but have disabled mail delivery.">(no mail)</span>
                   {% elif subscription.delivery_status == 3 %}{# BYADMIN #}
@@ -41,7 +41,6 @@
                   <span data-toggle="tooltip" title="Your mail has been bouncing so delivery has been disabled.">(bouncing)</span>
                   {% endif %}
                 </td>
-                <td>{{ subscription.email }}</td>
                 <td>
                   {% if l.archive_private %}
                     <form method="POST" action="{{ mailman_url }}/mailman/private/{{ l.name }}/" style="display: inline">
@@ -59,10 +58,6 @@
                     <input type="hidden" name="password" value="{{ subscription.password }}" />
                     <button type="submit" class="btn btn-sm btn-light">options</button>
                   </form>
-                  <form method="POST" action="{% url 'mailman2_unsubscribe' l.name subscription.email %}" style="display: inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-light">unsubscribe</button>
-                  </form>
                 </td>
               </tr>
             {% endfor %}
@@ -70,28 +65,17 @@
             <tr>
               <td>{{ l.name }}{% if l.recommended %} <i class="bi-star-fill" style="color:orange" data-toggle="tooltip" title="Recommended!"></i>{% endif %}</td>
               <td data-toggle="tooltip" title="{{ l.description }}">{{ l.description|truncatewords:6 }}</td>
-              <td></td>
-              <td></td>
               <td>
-                {% if advanced_mode %}
-                <div class="dropdown" style="display: inline">
-                  <a class="btn btn-sm btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">subscribe</a>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    {% for address in verified_addresses %}
-                      <li>
-                        <form method="POST" action="{% url 'mailman2_subscribe' l.name address.email %}" style="display: inline">
-                          {% csrf_token %}
-                          <button type="submit" class="btn btn-link dropdown-item">{{ address }}</button>
-                        </form>
-                      </li>
-                    {% endfor %}
-                  </ul>
-                </div>
-                {% else %}
-                <form method="POST" action="{% url 'mailman2_subscribe' l.name verified_address.email %}" style="display: inline">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-sm btn-light">subscribe</button>
-                </form>
+                {% if l.can_subscribe %}
+                  <form method="POST" action="{% url 'mailman2_subscribe_primary' l.name %}" style="display: inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-text py-1"><i class="bi-toggle-off" style="color:grey"></i></button>
+                  </form>
+                {% endif %}
+              </td>
+              <td>
+                {% if not l.can_subscribe %}
+                  <a class="btn btn-sm btn-light" href="{{ mailman_url }}/mailman/listinfo/{{ l.name }}">info</a>
                 {% endif %}
                 {% if not l.archive_private %}
                 <form method="POST" action="{{ mailman_url }}/mailman/pipermail/{{ l.name }}/" style="display: inline">
@@ -104,6 +88,31 @@
         {% endfor %}
     </tbody>
   </table>
+
+  <p>Email: {{ verified_address }} [<a href="{% url 'account_email' %}">edit</a>]</p>
+
+  {% if verified_addresses.count > 1 %}
+  <p>
+    Switch to <a href="#" data-bs-toggle="modal" data-bs-target="#modal-advanced-mode">advanced mode</a> if you wish to use multiple email addresses.
+  </p>
+
+  <div class="modal" id="modal-advanced-mode">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p>Switch to advanced mode?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <form method="POST" action="{% url 'mailman2_advanced_mode' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Yes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
 
 </div>
 
