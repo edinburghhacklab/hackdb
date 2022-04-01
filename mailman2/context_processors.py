@@ -4,7 +4,6 @@
 
 from . import mailmanapi
 from .models import MailingList
-from .utils import user_prompt
 
 
 def mailman2_prompts(request):
@@ -18,7 +17,7 @@ def mailman2_prompts(request):
     data = []
     for mailing_list in MailingList.objects.order_by("name"):
         if mailing_list.name not in member:
-            text = user_prompt(request.user, mailing_list)
+            text = mailing_list.user_prompt(request.user)
             if text:
                 data.append({"list_name": mailing_list.name, "message": text})
 

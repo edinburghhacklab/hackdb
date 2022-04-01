@@ -4,7 +4,6 @@
 
 from allauth.account.decorators import verified_email_required
 from allauth.account.models import EmailAddress
-from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
@@ -14,40 +13,21 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from . import mailmanapi
-from .models import GroupPolicy, MailingList
-from .utils import (
-    audit_list,
-    auto_load_lists,
-    load_lists,
-    user_can_see,
-    user_can_subscribe,
-    user_recommend,
-)
+from .models import GroupPolicy, MailingList, MailmanUser
+from .utils import audit_list, auto_load_lists, load_lists
 
 
-class AddressChangeForm(forms.Form):
-    list_name = forms.HiddenInput()
-    email = forms.ChoiceField(choices=())
-
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user")
-        super().__init__(*args, **kwargs)
-        verified_addresses = EmailAddress.objects.filter(
-            user=user, verified=True
-        ).order_by("-primary")
-        self.fields["email"].choices = [("", "(unsubscribe)")] + [
-            (address.email, address.email) for address in verified_addresses
-        ]
-
-
-@login_required
-@verified_email_required
-def overview(request):
+def build_overview_context(user):
     auto_load_lists()
 
-    verified_addresses = EmailAddress.objects.filter(
-        user=request.user, verified=True
-    ).order_by("-primary")
+    verified_addresses = EmailAddress.objects.filter(user=user, verified=True).order_by(
+        "-primary"
+    )
+
+    try:
+        MailmanUser.objects.get(user=user)
+    except MailmanUser.DoesNotExist:
+        MailmanUser.objects.create(user=user)
 
     try:
         subscriber_data = {}
@@ -61,14 +41,16 @@ def overview(request):
         context = {
             "error": "There was an error communicating with the Mailman server. Please try again later."
         }
-        return render(request, "mailman2/error.html", context)
+        return context
+
+    used_addresses = {}
 
     context = {
         "verified_addresses": verified_addresses,
         "verified_address": verified_addresses[0],
         "mailman_url": settings.MAILMAN_URL,
         "mailinglists": [],
-        "advanced_mode": True,
+        "advanced_mode": user.mailmanuser.advanced_mode,
     }
 
     mailinglists = []
@@ -81,13 +63,20 @@ def overview(request):
             "visible": False,
             "subscribed": False,
             "recommended": False,
+            "can_subscribe": False,
             "subscriptions": [],
         }
         row = 0
         for address in verified_addresses:
-            if user_can_see(request.user, mailing_list):
+            if mailing_list.user_can_see(user):
                 list_data["visible"] = True
-            if user_recommend(request.user, mailing_list):
+            if mailing_list.user_can_subscribe(user):
+                list_data["visible"] = True
+                list_data["can_subscribe"] = True
+            if mailing_list.user_recommend(user):
+                list_data["visible"] = True
+                list_data["recommended"] = True
+            if mailing_list.user_can_subscribe(user):
                 list_data["visible"] = True
                 list_data["recommended"] = True
             if mailing_list.name in subscriber_data[address.email]:
@@ -97,10 +86,7 @@ def overview(request):
                 subscription["row"] = row
                 # subscription["obj"] = address
                 subscription["email"] = address.email
-                subscription["address_change_form"] = AddressChangeForm(
-                    {"email": address.email, "list_name": mailing_list.name},
-                    user=request.user,
-                )
+                used_addresses[address.email] = True
                 list_data["subscriptions"].append(subscription)
                 row = row + 1
         list_data["subscriptions_count"] = len(list_data["subscriptions"])
@@ -109,7 +95,26 @@ def overview(request):
 
     context["mailinglists"] = mailinglists
 
-    return render(request, "mailman2/overview.html", context)
+    if used_addresses == {}:
+        pass
+    elif list(used_addresses.keys()) == [verified_addresses[0].email]:
+        pass
+    else:
+        context["advanced_mode"] = True
+
+    return context
+
+
+@login_required
+@verified_email_required
+def overview(request):
+    context = build_overview_context(request.user)
+    if "error" in context:
+        return render(request, "mailman2/error.html", context)
+    if context["advanced_mode"]:
+        return render(request, "mailman2/overview_advanced.html", context)
+    else:
+        return render(request, "mailman2/overview_simple.html", context)
 
 
 @login_required
@@ -127,7 +132,7 @@ def subscribe(request, name, email=None):
         ).first()
         if not verified_address:
             raise RuntimeError
-    if user_can_subscribe(request.user, mailing_list):
+    if mailing_list.user_can_subscribe(request.user):
         if settings.MAILMAN_ENABLE_INTERACTIVE_CHANGES:
             if mailmanapi.subscribe(name, verified_address.email):
                 messages.add_message(
@@ -143,7 +148,7 @@ def subscribe(request, name, email=None):
             messages.add_message(
                 request,
                 messages.ERROR,
-                "Subscribes and unsubscribes are disabled at the moment.",
+                "Subscription changes are disabled at the moment.",
             )
     else:
         messages.add_message(
@@ -176,7 +181,39 @@ def unsubscribe(request, name, email):
         messages.add_message(
             request,
             messages.ERROR,
-            "Subscribes and unsubscribes are disabled at the moment.",
+            "Subscription changes are disabled at the moment.",
+        )
+    return HttpResponseRedirect(reverse("mailman2_overview"))
+
+
+@login_required
+@verified_email_required
+@require_POST
+def change_address(request, name, old_email, new_email):
+    old_verified_address = EmailAddress.objects.get(
+        user=request.user, verified=True, email=old_email
+    )
+    new_verified_address = EmailAddress.objects.get(
+        user=request.user, verified=True, email=new_email
+    )
+    if settings.MAILMAN_ENABLE_INTERACTIVE_CHANGES:
+        if mailmanapi.change_address(
+            name, old_verified_address.email, new_verified_address.email
+        ):
+            messages.add_message(
+                request, messages.SUCCESS, f"Changed address for {name}."
+            )
+        else:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                f"Error changing address for {name}, please try again later.",
+            )
+    else:
+        messages.add_message(
+            request,
+            messages.ERROR,
+            "Subscription changes are disabled at the moment.",
         )
     return HttpResponseRedirect(reverse("mailman2_overview"))
 
@@ -199,3 +236,44 @@ def audit(request, name):
             ),
         },
     )
+
+
+@login_required
+@verified_email_required
+@require_POST
+def simple_mode(request):
+    verified_addresses = EmailAddress.objects.filter(
+        user=request.user, verified=True
+    ).order_by("-primary")
+    primary_address = verified_addresses[0]
+
+    errors = False
+
+    for address in verified_addresses:
+        if address == primary_address:
+            continue
+        if not mailmanapi.global_change_address(address.email, primary_address.email):
+            errors = True
+
+    if not errors:
+        try:
+            mailmanuser = MailmanUser.objects.get(user=request.user)
+        except MailmanUser.DoesNotExist:
+            mailmanuser = MailmanUser.objects.create(user=request.user)
+        mailmanuser.advanced_mode = False
+        mailmanuser.save()
+
+    return HttpResponseRedirect(reverse("mailman2_overview"))
+
+
+@login_required
+@verified_email_required
+@require_POST
+def advanced_mode(request):
+    try:
+        mailmanuser = MailmanUser.objects.get(user=request.user)
+    except MailmanUser.DoesNotExist:
+        mailmanuser = MailmanUser.objects.create(user=request.user)
+    mailmanuser.advanced_mode = True
+    mailmanuser.save()
+    return HttpResponseRedirect(reverse("mailman2_overview"))

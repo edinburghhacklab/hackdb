@@ -40,76 +40,76 @@ def load_lists():
     cache.set("mailman2.lists_loaded", True, timeout=3600)
 
 
-def user_can_subscribe(user, mailing_list):
-    if mailing_list.subscribe_policy in [MailingList.CONFIRM]:
-        # print(f"user_can_subscribe({user}, {mailing_list}): yes, open list")
-        return True
-    if user:
-        for group in user.groups.all():
-            if GroupPolicy.objects.filter(
-                group=group, mailing_list=mailing_list
-            ).exists():
-                # print(f"user_can_subscribe({user}, {mailing_list}): yes, in group {policy.group}")
-                return True
-    if mailing_list.check_subscribe_auto_approval(user.email):
-        return True
-    # print(f"user_can_subscribe({user}, {mailing_list}): no")
-    return False
+# def user_can_subscribe(user, mailing_list):
+#     if mailing_list.subscribe_policy in [MailingList.CONFIRM]:
+#         # print(f"user_can_subscribe({user}, {mailing_list}): yes, open list")
+#         return True
+#     if user:
+#         for group in user.groups.all():
+#             if GroupPolicy.objects.filter(
+#                 group=group, mailing_list=mailing_list
+#             ).exists():
+#                 # print(f"user_can_subscribe({user}, {mailing_list}): yes, in group {policy.group}")
+#                 return True
+#     if mailing_list.check_subscribe_auto_approval(user.email):
+#         return True
+#     # print(f"user_can_subscribe({user}, {mailing_list}): no")
+#     return False
 
 
-def user_can_see(user, mailing_list):
-    if mailing_list.advertised:
-        # print(f"user_can_see({user}, {mailing_list}): yes, advertised list")
-        return True
-    if user:
-        for group in user.groups.all():
-            if GroupPolicy.objects.filter(
-                group=group, mailing_list=mailing_list
-            ).exists():
-                # print(f"user_can_see({user}, {mailing_list}): yes, in group {group}")
-                return True
-    if mailing_list.check_subscribe_auto_approval(user.email):
-        return True
-    # print(f"user_can_see({user}, {mailing_list}): no")
-    return False
+# def user_can_see(user, mailing_list):
+#     if mailing_list.advertised:
+#         # print(f"user_can_see({user}, {mailing_list}): yes, advertised list")
+#         return True
+#     if user:
+#         for group in user.groups.all():
+#             if GroupPolicy.objects.filter(
+#                 group=group, mailing_list=mailing_list
+#             ).exists():
+#                 # print(f"user_can_see({user}, {mailing_list}): yes, in group {group}")
+#                 return True
+#     if mailing_list.check_subscribe_auto_approval(user.email):
+#         return True
+#     # print(f"user_can_see({user}, {mailing_list}): no")
+#     return False
 
 
-def user_recommend(user, mailing_list):
-    if user:
-        for group in user.groups.all():
-            if GroupPolicy.objects.filter(
-                group=group,
-                mailing_list=mailing_list,
-                policy__gte=GroupPolicy.RECOMMEND,
-            ).exists():
-                return True
-    return False
+# def user_recommend(user, mailing_list):
+#     if user:
+#         for group in user.groups.all():
+#             if GroupPolicy.objects.filter(
+#                 group=group,
+#                 mailing_list=mailing_list,
+#                 policy__gte=GroupPolicy.RECOMMEND,
+#             ).exists():
+#                 return True
+#     return False
 
 
-def user_prompt(user, mailing_list):
-    if user:
-        for group in user.groups.all():
-            try:
-                return GroupPolicy.objects.get(
-                    group=group, policy=GroupPolicy.PROMPT, mailing_list=mailing_list
-                ).prompt
-            except GroupPolicy.DoesNotExist:
-                pass
-    return None
+# def user_prompt(user, mailing_list):
+#     if user:
+#         for group in user.groups.all():
+#             try:
+#                 return GroupPolicy.objects.get(
+#                     group=group, policy=GroupPolicy.PROMPT, mailing_list=mailing_list
+#                 ).prompt
+#             except GroupPolicy.DoesNotExist:
+#                 pass
+#     return None
 
 
-def user_subscribe_policy(mailing_list, user):
-    best = None
-    for group in user.groups.all():
-        for policy in GroupPolicy.objects.filter(
-            group=group, mailing_list=mailing_list
-        ):
-            if best is None:
-                best = policy
-            else:
-                if policy.policy > best.policy:
-                    best = policy
-    return best
+# def user_subscribe_policy(mailing_list, user):
+#     best = None
+#     for group in user.groups.all():
+#         for policy in GroupPolicy.objects.filter(
+#             group=group, mailing_list=mailing_list
+#         ):
+#             if best is None:
+#                 best = policy
+#             else:
+#                 if policy.policy > best.policy:
+#                     best = policy
+#     return best
 
 
 def audit_list(mailing_list):
@@ -118,7 +118,7 @@ def audit_list(mailing_list):
     subscribers = {}
 
     for user in get_user_model().objects.all():
-        policy = user_subscribe_policy(mailing_list, user)
+        policy = mailing_list.user_subscribe_policy(user)
         if policy:
             user_is_subscribed = False
             verified_addresses = user.emailaddress_set.filter(verified=True).order_by(
@@ -160,11 +160,11 @@ def audit_list(mailing_list):
     return subscribers
 
 
-def change_address(user, old_address, new_address):
+def global_change_address(user, old_address, new_address):
     if old_address:
         if settings.MAILMAN_ENABLE_ADDRESS_CHANGES:
             try:
-                if mailmanapi.change_address(old_address, new_address):
+                if mailmanapi.global_change_address(old_address, new_address):
                     return True
             except Exception as e:
                 print("Exception while talking to Mailman API:", e)
@@ -182,7 +182,7 @@ def change_address(user, old_address, new_address):
 def process_queue():
     for change in ChangeOfAddress.objects.order_by("created"):
         if settings.MAILMAN_ENABLE_ADDRESS_CHANGES:
-            if mailmanapi.change_address(change.old_email, change.new_email):
+            if mailmanapi.global_change_address(change.old_email, change.new_email):
                 change.delete()
                 yield f"{change.old_email} -> {change.new_email}: ok"
             else:

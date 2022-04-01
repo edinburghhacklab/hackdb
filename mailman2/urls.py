@@ -23,5 +23,12 @@ urlpatterns = [
         views.unsubscribe,
         name="mailman2_unsubscribe",
     ),
+    path(
+        "<str:name>/change_address/<str:old_email>/<str:new_email>",
+        views.change_address,
+        name="mailman2_change_address",
+    ),
     path("<str:name>/audit", views.audit, name="mailman2_audit"),
+    path("simple_mode", views.simple_mode, name="mailman2_simple_mode"),
+    path("advanced_mode", views.advanced_mode, name="mailman2_advanced_mode"),
 ]
