@@ -38,19 +38,19 @@
             <td>
               <form method="POST" action="{% url 'nfctokens_mytokens_disable' token.uid %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-xs btn-link py-0"><i class="bi-toggle-on"></i></button>
+                <button type="submit" class="btn btn-text py-0"><i class="bi-toggle-on"></i></button>
               </form>
             </td>
             {% else %}
             <td>
               <form method="POST" action="{% url 'nfctokens_mytokens_enable' token.uid %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-xs btn-link py-0"><i class="bi-toggle-off" style="color:grey"></i></button>
+                <button type="submit" class="btn btn-text py-0"><i class="bi-toggle-off" style="color:grey"></i></button>
               </form>
             </td>
             {% endif %}
             <td>
-              <a href="{% url 'nfctokens_mytokens_delete' token.uid %}"><i class="bi-trash" style="color:black"></i></a>
+              <a class="btn btn-text py-0" href="{% url 'nfctokens_mytokens_delete' token.uid %}"><i class="bi-trash"></i></a>
             </td>
           </tr>
         {% endfor %}
