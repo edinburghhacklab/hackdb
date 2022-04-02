@@ -17,10 +17,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, reverse
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
-
-from apikeys.decorators import apikey_required
 
 from .models import NFCToken, NFCTokenLog
 
@@ -184,7 +181,6 @@ def token_sighting(token, location, authorized, type_="unknown", timestamp=None)
 
 
 @require_GET
-@apikey_required
 @permission_required("nfctokens.export_tokens", raise_exception=True)
 def nfc_tokens(request):
     data = {}
@@ -205,9 +201,7 @@ def nfc_tokens(request):
 
 
 @never_cache
-@csrf_exempt
 @require_POST
-@apikey_required
 @permission_required("nfctokens.auth_token", raise_exception=True)
 def nfc_token_auth(request):
     data = json.loads(request.body.decode())

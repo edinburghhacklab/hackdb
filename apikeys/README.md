@@ -19,13 +19,12 @@ MIDDLEWARE = [
 ]
 ```
 
-In views, use the permission_required decorator. If you use @csrf_exempt
-then also add @apikey_required.
+In views, use the @permission_required decorator. @csrf_exempt shouldn't
+be required as the middleware will disable CSRF on a request with a
+successful API authentication.
 
 ```
-@csrf_exempt
 @require_POST
-@apikey_required
 @permission_required("app1.permission123", raise_exception=True)
 def my_view(...):
    ...

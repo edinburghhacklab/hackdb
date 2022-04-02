@@ -10,21 +10,15 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import (
     login_required,
     permission_required,
-    user_passes_test,
 )
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from .models import DiscordUser, DiscordVerificationToken
-
-
-def is_not_superuser(user):
-    return not user.is_superuser
 
 
 @never_cache
@@ -53,12 +47,8 @@ def api_get_user(request, discord_id):
     )
 
 
-# is_not_superuser is required so that CSRF protection
-# is not accidentally bypassed by superusers.
 @never_cache
-@csrf_exempt
 @require_POST
-@user_passes_test(is_not_superuser)
 @permission_required(
     "discorduser.generate_discord_confirmation_token", raise_exception=True
 )

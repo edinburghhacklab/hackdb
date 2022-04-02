@@ -18,6 +18,7 @@ class APIKeyMiddleware:
                 try:
                     apikey = APIKey.objects.get(key=credentials)
                     request.user = APIUser(apikey)
+                    request._dont_enforce_csrf_checks = True
                     return self.get_response(request)
                 except APIKey.DoesNotExist:
                     pass
@@ -28,6 +29,7 @@ class APIKeyMiddleware:
                 try:
                     apikey = APIKey.objects.get(key=password)
                     request.user = APIUser(apikey)
+                    request._dont_enforce_csrf_checks = True
                     return self.get_response(request)
                 except APIKey.DoesNotExist:
                     pass
@@ -36,6 +38,7 @@ class APIKeyMiddleware:
             try:
                 apikey = APIKey.objects.get(key=request.headers["X-API-Token"])
                 request.user = APIUser(apikey)
+                request._dont_enforce_csrf_checks = True
                 return self.get_response(request)
             except APIKey.DoesNotExist:
                 pass
@@ -44,6 +47,7 @@ class APIKeyMiddleware:
             try:
                 apikey = APIKey.objects.get(request.headers["X-API-Key"])
                 request.user = APIUser(apikey)
+                request._dont_enforce_csrf_checks = True
                 return self.get_response(request)
             except APIKey.DoesNotExist:
                 pass
