@@ -20,7 +20,7 @@
     </button>
     <ul class="nav navbar-nav justify-content-end collapse navbar-collapse" id="navbarToggler">
       {% if request.user.is_authenticated %}
-        <li class="nav-item"><a class="nav-link"  href="{% url 'myprofile' %}">Profile</a></li>
+        <li class="nav-item"><a class="nav-link"  href="{% url 'membership_profile' %}">Profile</a></li>
         <li class="nav-item"><a class="nav-link"  href="{% url 'membership_overview' %}">Membership</a></li>
         <li class="nav-item"><a class="nav-link"  href="{% url 'mailman2_overview' %}">Lists</a></li>
         <li class="nav-item"><a class="nav-link"  href="{% url 'mytokens' %}">Tokens</a></li>

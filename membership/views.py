@@ -39,7 +39,7 @@ class MemberSelfForm(ModelForm):
 
 
 @login_required
-def myprofile(request):
+def profile(request):
     if request.method == "POST":
         user_form = UserSelfForm(request.POST, prefix="user", instance=request.user)
         try:
@@ -67,7 +67,7 @@ def myprofile(request):
         "user_form": user_form,
         "member_form": member_form,
     }
-    return render(request, "membership/myprofile.html", context)
+    return render(request, "membership/profile.html", context)
 
 
 @login_required

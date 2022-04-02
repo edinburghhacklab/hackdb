@@ -8,9 +8,9 @@ from . import views
 
 urlpatterns = [
     path("", views.overview, name="membership_overview"),
-    path("myprofile", views.myprofile, name="myprofile"),
-    path("register", views.show_register, name="show_register"),
-    path("api/member_count", views.member_count, name="member_count"),
+    path("profile", views.profile, name="membership_profile"),
+    path("register", views.show_register, name="membership_register"),
+    path("api/member_count", views.member_count, name="membership_count"),
     path(
         "api/xero_contacts",
         views.xero_contacts_json,
