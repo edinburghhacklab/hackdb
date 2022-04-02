@@ -54,6 +54,11 @@ def datarequest_download(request):
     except ObjectDoesNotExist:
         data["discorduser"] = None
 
+    try:
+        data["posix"] = obj_to_dict(request.user.posix)
+    except ObjectDoesNotExist:
+        data["posix"] = None
+
     data["groups"] = list(group.name for group in request.user.groups.order_by("name"))
     data["groupownerships"] = list(
         groupownership.group.name
@@ -66,7 +71,6 @@ def datarequest_download(request):
     )
     data["nfctokens"] = list(map(obj_to_dict, request.user.nfctokens.all()))
     data["nfctokenlogs"] = list(map(obj_to_dict, request.user.nfctokenlogs.all()))
-    data["posix"] = obj_to_dict(request.user.posix)
     data["sshkeys"] = list(map(obj_to_dict, request.user.sshkey_set.all()))
 
     try:
