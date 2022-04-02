@@ -18,11 +18,7 @@
       </thead>
       <tbody>
         {% for sshkey in sshkeys %}
-          {% if sshkey.enabled %}
           <tr>
-          {% else %}
-          <tr class="text-muted">
-          {% endif %}
             <td><a href="{% url 'posixusers_sshkeys_edit' sshkey.id %}">{{ sshkey.key|truncatechars:30 }}</a></td>
             <td>{{ sshkey.comment }}</td>
             {% if sshkey.enabled %}

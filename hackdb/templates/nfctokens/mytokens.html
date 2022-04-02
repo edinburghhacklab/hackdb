@@ -20,11 +20,7 @@
       </thead>
       <tbody>
         {% for token in tokens %}
-          {% if token.enabled %}
           <tr>
-          {% else %}
-          <tr class="text-muted">
-          {% endif %}
             <td><a href="{% url 'nfctokens_mytokens_edit' token.uid %}">{{ token.uid }}</a></td>
             <td>
               {% if token.description %}
