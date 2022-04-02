@@ -25,7 +25,7 @@
           {% else %}
           <tr class="text-muted">
           {% endif %}
-            <td><a href="{% url 'mytokens_edit' token.uid %}">{{ token.uid }}</a></td>
+            <td><a href="{% url 'nfctokens_mytokens_edit' token.uid %}">{{ token.uid }}</a></td>
             <td>
               {% if token.description %}
               {{ token.description }}
@@ -36,21 +36,21 @@
             <td><span data-bs-toggle="tooltip" title="{{ token.last_seen }}">{{ token.last_seen|naturaltime }}</span></td>
             {% if token.enabled %}
             <td>
-              <form method="POST" action="{% url 'mytokens_disable' token.uid %}">
+              <form method="POST" action="{% url 'nfctokens_mytokens_disable' token.uid %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-xs btn-link py-0"><i class="bi-toggle-on"></i></button>
               </form>
             </td>
             {% else %}
             <td>
-              <form method="POST" action="{% url 'mytokens_enable' token.uid %}">
+              <form method="POST" action="{% url 'nfctokens_mytokens_enable' token.uid %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-xs btn-link py-0"><i class="bi-toggle-off" style="color:grey"></i></button>
               </form>
             </td>
             {% endif %}
             <td>
-              <a href="{% url 'mytokens_delete' token.uid %}"><i class="bi-trash" style="color:black"></i></a>
+              <a href="{% url 'nfctokens_mytokens_delete' token.uid %}"><i class="bi-trash" style="color:black"></i></a>
             </td>
           </tr>
         {% endfor %}
@@ -61,8 +61,8 @@
     {% endif %}
   </div>
   <div class="container">
-    <a href="{% url 'mytokens_claim' %}"><button class="btn btn-secondary">Add Token</button></a>
-    <a href="{% url 'mytokenlogs' %}"><button class="btn btn-secondary">View Logs</button></a>
+    <a href="{% url 'nfctokens_mytokens_claim' %}"><button class="btn btn-secondary">Add Token</button></a>
+    <a href="{% url 'nfctokens_mytokenlogs' %}"><button class="btn btn-secondary">View Logs</button></a>
   </div>
 </section>
 

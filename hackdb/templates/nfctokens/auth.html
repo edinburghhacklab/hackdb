@@ -5,7 +5,7 @@
 {% block content %}
 <section>
   <div class="container">
-    <form method="post" action="{{ url 'nfc_token_auth' }}">
+    <form method="post" action="{{ url 'nfctokens_api_nfc_token_auth' }}">
       {% csrf_token %}
       {% bootstrap_form form %}
       <div class="form-actions">

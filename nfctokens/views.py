@@ -70,7 +70,7 @@ def mytokens_add(request, uid=None):
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "Token added.")
-            return HttpResponseRedirect(reverse("mytokens"))
+            return HttpResponseRedirect(reverse("nfctokens_mytokens"))
     else:
         form = TokenAddForm(initial={"uid": uid})
         if uid is None:
@@ -93,7 +93,7 @@ def mytokens_edit(request, uid):
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "Token updated.")
-            return HttpResponseRedirect(reverse("mytokens"))
+            return HttpResponseRedirect(reverse("nfctokens_mytokens"))
     else:
         form = TokenEditForm(instance=token)
     context = {"form": form}
@@ -116,7 +116,7 @@ def mytokens_delete(request, uid):
         messages.add_message(
             request, messages.SUCCESS, "Token %s deleted." % (token.uid)
         )
-        return HttpResponseRedirect(reverse("mytokens"))
+        return HttpResponseRedirect(reverse("nfctokens_mytokens"))
     else:
         return render(request, "nfctokens/mytokens_delete.html", {"token": token})
 
@@ -129,7 +129,7 @@ def mytokens_enable(request, uid):
     token.enabled = True
     token.save()
     messages.add_message(request, messages.SUCCESS, "Token %s enabled." % (token.uid))
-    return HttpResponseRedirect(reverse("mytokens"))
+    return HttpResponseRedirect(reverse("nfctokens_mytokens"))
 
 
 @login_required
@@ -140,7 +140,7 @@ def mytokens_disable(request, uid):
     token.enabled = False
     token.save()
     messages.add_message(request, messages.SUCCESS, "Token %s disabled." % (token.uid))
-    return HttpResponseRedirect(reverse("mytokens"))
+    return HttpResponseRedirect(reverse("nfctokens_mytokens"))
 
 
 @login_required
