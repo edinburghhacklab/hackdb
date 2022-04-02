@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+import json
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
@@ -9,6 +11,7 @@ from django.forms import ModelForm
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.views.decorators.http import require_GET, require_POST
 
 from .models import Member
 
@@ -92,3 +95,60 @@ def member_count(request):
         if user.member.is_member():
             count = count + 1
     return JsonResponse({"members": count})
+
+
+@require_GET
+@permission_required("membership.get_xero_contacts")
+def xero_contacts_json(request):
+    data = {}
+    for member in Member.objects.all():
+        if member.xero_uuid or member.membership_status in [1, 2, 3]:
+            record = {
+                "uuid": str(member.uuid),
+                "xero_uuid": None,
+                "name": member.real_name,
+                "email": member.user.email,
+                "phone": "",
+                "address_street1": member.address_street1,
+                "address_street2": member.address_street2,
+                "address_street3": member.address_street3,
+                "address_locality": member.address_locality,
+                "address_state": member.address_state,
+                "address_postalcode": member.address_postalcode,
+                "address_country": "",
+                "member": member.is_member(),
+            }
+            if member.xero_uuid:
+                record["xero_uuid"] = str(member.xero_uuid)
+            if member.phone:
+                record["phone"] = str(member.phone)
+            if member.address_country:
+                record["address_country"] = member.address_country.name
+            data[record["uuid"]] = record
+    return JsonResponse(data)
+
+
+@require_POST
+@permission_required("membership.update_xero_contacts")
+def xero_update_uuid(request):
+    data = json.loads(request.body.decode())
+    data["uuid"] = data["uuid"].strip().lower().replace("-", "")
+    data["xero_uuid"] = data["xero_uuid"].strip().lower().replace("-", "")
+    try:
+        member = Member.objects.get(uuid=data["uuid"])
+        if member.xero_uuid:
+            if (
+                str(member.xero_uuid).strip().lower().replace("-", "")
+                == data["xero_uuid"]
+            ):
+                return JsonResponse({"status": "ok", "message": "No change required"})
+            else:
+                return JsonResponse(
+                    {"status": "error", "message": "Conflicting UUID provided"}
+                )
+        else:
+            member.xero_uuid = data["xero_uuid"]
+            member.save()
+            return JsonResponse({"status": "ok", "message": "Updated"})
+    except Member.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "UUID not found"})

@@ -70,6 +70,8 @@ class Member(models.Model):
     class Meta:
         permissions = [
             ("view_register", "Can view the register of members"),
+            ("get_xero_contacts", "Can get contact data for Xero"),
+            ("update_xero_contacts", "Can update member Xero UUIDs"),
         ]
 
     def __str__(self):

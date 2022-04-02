@@ -11,4 +11,14 @@ urlpatterns = [
     path("myprofile", views.myprofile, name="myprofile"),
     path("register", views.show_register, name="show_register"),
     path("api/member_count", views.member_count, name="member_count"),
+    path(
+        "api/xero_contacts",
+        views.xero_contacts_json,
+        name="membership_xero_contacts_json",
+    ),
+    path(
+        "api/xero_update_uuid",
+        views.xero_update_uuid,
+        name="membership_xero_update_uuid",
+    ),
 ]
