@@ -4,7 +4,7 @@
 
 import datetime
 
-from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
@@ -23,10 +23,10 @@ class RecentTokenManager(models.Manager):
 
 class NFCToken(models.Model):
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        get_user_model(),
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name="nfctokens",
     )
     uid = models.CharField(
@@ -35,7 +35,8 @@ class NFCToken(models.Model):
         verbose_name="UID",
         validators=[
             RegexValidator(
-                regex=r"^\s*[0-9a-fA-F]+\s*$", message="Enter a valid hexadecimal value"
+                regex=r"^\s*([0-9a-fA-F]{8}|[0-9a-fA-F]{14})\s*$",
+                message="Enter a valid UID, either 8 or 14 hexadecimal digits",
             )
         ],
     )
@@ -67,7 +68,7 @@ class NFCToken(models.Model):
 class NFCTokenLog(models.Model):
     timestamp = models.DateTimeField(null=False, blank=False, editable=False)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        get_user_model(),
         null=True,
         blank=True,
         editable=False,
