@@ -37,7 +37,12 @@ class NFCToken(models.Model):
             RegexValidator(
                 regex=r"^\s*([0-9a-fA-F]{8}|[0-9a-fA-F]{14})\s*$",
                 message="Enter a valid UID, either 8 or 14 hexadecimal digits",
-            )
+            ),
+            RegexValidator(
+                regex=r"^\s*80[0-9a-fA-F]{6}\s*$",
+                message="This is a randomly-generated UID which cannot be used for authentication",
+                inverse_match=True,
+            ),
         ],
     )
     description = models.CharField(max_length=255, blank=True)
