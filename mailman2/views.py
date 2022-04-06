@@ -249,11 +249,20 @@ def simple_mode(request):
 
     errors = False
 
-    for address in verified_addresses:
-        if address == primary_address:
-            continue
-        if not mailmanapi.global_change_address(address.email, primary_address.email):
-            errors = True
+    if settings.MAILMAN_ENABLE_INTERACTIVE_CHANGES:
+        for address in verified_addresses:
+            if address == primary_address:
+                continue
+            if not mailmanapi.global_change_address(
+                address.email, primary_address.email
+            ):
+                errors = True
+    else:
+        messages.add_message(
+            request,
+            messages.ERROR,
+            "Subscription changes are disabled at the moment.",
+        )
 
     if not errors:
         try:
