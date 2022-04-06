@@ -46,7 +46,25 @@
             </td>
             {% endif %}
             <td>
-              <a class="btn btn-text py-0" href="{% url 'nfctokens_mytokens_delete' token.uid %}"><i class="bi-trash"></i></a>
+              <a data-bs-toggle="modal" data-bs-target="#modal-delete-{{ token.uid }}" href="#">
+                <i class="bi-trash" style="color:black"></i>
+              </a>
+              <div class="modal" id="modal-delete-{{ token.uid }}">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <p>Delete token {{ token.uid }}?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <form method="POST" action="{% url 'nfctokens_mytokens_delete' token.uid %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Yes</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </td>
           </tr>
         {% endfor %}
