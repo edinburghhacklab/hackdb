@@ -128,7 +128,7 @@ def subscribe(request, name, email=None):
         )
     else:
         verified_address = EmailAddress.objects.filter(
-            user=request.user, verified=True
+            user=request.user, primary=True, verified=True
         ).first()
         if not verified_address:
             raise RuntimeError
