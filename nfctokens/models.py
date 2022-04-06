@@ -35,8 +35,8 @@ class NFCToken(models.Model):
         verbose_name="UID",
         validators=[
             RegexValidator(
-                regex=r"^\s*([0-9a-fA-F]{8}|[0-9a-fA-F]{14})\s*$",
-                message="Enter a valid UID, either 8 or 14 hexadecimal digits",
+                regex=r"^\s*([0-9a-fA-F]{8}|[0-9a-fA-F]{14}|[0-9a-fA-F]{20})\s*$",
+                message="Enter a valid UID of 8, 14 or 20 hexadecimal digits",
             ),
             RegexValidator(
                 regex=r"^\s*08[0-9a-fA-F]{6}\s*$",
