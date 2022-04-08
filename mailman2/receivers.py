@@ -4,15 +4,22 @@
 
 import allauth.account.signals
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+from .models import MailmanUser
 from .utils import global_change_address
 
 
 @receiver(allauth.account.signals.email_changed)
 def email_changed(request, user, from_email_address, to_email_address, **kwargs):
+    try:
+        user.mailmanuser
+    except ObjectDoesNotExist:
+        user.mailmanuser = MailmanUser.objects.create(user=user)
+
     if user.mailmanuser.advanced_mode:
         overview_url = reverse("mailman2_overview")
         messages.add_message(
