@@ -13,7 +13,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_GET, require_POST
 
-from .models import Member
+from .models import Member, MembershipTerm
 
 
 class MemberSelfForm(ModelForm):
@@ -71,8 +71,39 @@ def show_register(request):
         .order_by("member__real_name")
     ):
         users.append(user)
-    context = {"users": users}
+    terms = MembershipTerm.objects.order_by("user__member__real_name", "start")
+    context = {"users": users, "terms": terms}
     return render(request, "membership/register.html", context)
+
+
+@login_required
+@permission_required("membership.view_register")
+def show_register_with_display_names(request):
+    users = []
+    for user in (
+        get_user_model()
+        .objects.filter(member__isnull=False)
+        .order_by("member__real_name")
+    ):
+        users.append(user)
+    terms = MembershipTerm.objects.order_by("user__member__real_name", "start")
+    context = {"users": users, "terms": terms}
+    return render(request, "membership/register_with_display_names.html", context)
+
+
+@login_required
+@permission_required("membership.view_register")
+def show_register_with_address(request):
+    users = []
+    for user in (
+        get_user_model()
+        .objects.filter(member__isnull=False)
+        .order_by("member__real_name")
+    ):
+        users.append(user)
+    terms = MembershipTerm.objects.order_by("user__member__real_name", "start")
+    context = {"users": users, "terms": terms}
+    return render(request, "membership/register_with_address.html", context)
 
 
 @login_required

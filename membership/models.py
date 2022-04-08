@@ -155,6 +155,20 @@ class Member(models.Model):
         )["first_joined"]
         return first_joined_date
 
+    def get_display_name(self):
+        return self.display_name or self.real_name
+
+    def get_address(self):
+        parts = [
+            self.address_street1.strip(),
+            self.address_street2.strip(),
+            self.address_street3.strip(),
+            self.address_locality.strip(),
+            self.address_state.strip(),
+            str(self.address_country),
+        ]
+        return ", ".join(filter(len, parts))
+
 
 class MembershipTerm(models.Model):
     REGULAR = 0

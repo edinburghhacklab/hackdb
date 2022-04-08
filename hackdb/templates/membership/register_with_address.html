@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block content %}
+<div class="container">
+  <h1>Members</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for term in terms %}
+      <tr>
+        <td>{{ term.user.member.real_name }}</td>
+        <td>{{ term.user.member.get_address }}</td>
+        <td>{% if term.end %}{{ term.start}} to {{ term.end }}{% else %}{{ term.start }}{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

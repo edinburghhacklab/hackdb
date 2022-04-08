@@ -15,7 +15,7 @@
     <tbody>
       {% for term in terms %}
         <tr>
-          <td>{{ term.user.member.real_name }}</td>
+          <td>{{ term.user.member.get_display_name }}</td>
           <td>{% if term.end %}{{ term.start}} to {{ term.end }}{% else %}{{ term.start }}{% endif %}</td>
         </tr>
       {% endfor %}
