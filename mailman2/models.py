@@ -89,15 +89,9 @@ class MailingList(models.Model):
                 pass
 
     def user_subscribe_policy(self, user):
-        best = None
-        for group in user.groups.all():
-            for policy in self.group_policies.filter(group=group):
-                if best is None:
-                    best = policy
-                else:
-                    if policy.policy > best.policy:
-                        best = policy
-        return best
+        for policy in self.group_policies.order_by("-policy"):
+            if user.groups.contains(policy.group):
+                return policy
 
     def address_can_remain(self, address):
         if not self.auto_unsubscribe:

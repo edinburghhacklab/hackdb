@@ -68,17 +68,15 @@ def build_overview_context(user):
         }
         row = 0
         for address in verified_addresses:
-            if mailing_list.user_can_see(user):
+            group_policy = mailing_list.user_subscribe_policy(user)
+            if mailing_list.advertised:
                 list_data["visible"] = True
-            if mailing_list.user_can_subscribe(user):
-                list_data["visible"] = True
-                list_data["can_subscribe"] = True
-            if mailing_list.user_recommend(user):
-                list_data["visible"] = True
-                list_data["recommended"] = True
-            if mailing_list.user_can_subscribe(user):
-                list_data["visible"] = True
-                list_data["recommended"] = True
+            if group_policy:
+                if group_policy.policy >= GroupPolicy.ALLOW:
+                    list_data["visible"] = True
+                    list_data["can_subscribe"] = True
+                if group_policy.policy >= GroupPolicy.RECOMMEND:
+                    list_data["recommended"] = True
             if mailing_list.name in subscriber_data[address.email]:
                 list_data["visible"] = True
                 list_data["subscribed"] = True
