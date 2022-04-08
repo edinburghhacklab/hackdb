@@ -105,6 +105,7 @@ class Command(BaseCommand):
                 member.user = user
                 member.uuid = record["fields"]["uuid"]
                 member.real_name = record["fields"]["legal_name"]
+                member.display_name = record["fields"]["display_name"]
                 member.address_street1 = record["fields"]["address_street1"]
                 member.address_street2 = record["fields"]["address_street2"]
                 member.address_street3 = record["fields"]["address_street3"]
@@ -119,14 +120,8 @@ class Command(BaseCommand):
                 member.membership_suspended = record["fields"]["membership_suspended"]
                 member.membership_status = record["fields"]["membership_status"]
                 member.save()
-                if record["fields"]["display_name"]:
-                    if len(record["fields"]["display_name"].split()) == 2:
-                        user.first_name, user.last_name = record["fields"][
-                            "display_name"
-                        ].split()
-                    else:
-                        user.first_name = record["fields"]["display_name"]
-                    user.save()
+                user.first_name = member.display_name or member.real_name
+                user.save()
                 if record["fields"]["posix_uid"]:
                     user.posix.uid = record["fields"]["posix_uid"]
                     if record["fields"]["password_ldap"].upper().startswith("{CRYPT}"):
