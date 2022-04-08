@@ -14,8 +14,8 @@ from .utils import sync_group, sync_user
 
 
 @receiver(post_save, sender=get_user_model())
-def sync_ldap_user(sender, instance, **kwargs):
-    if list(kwargs.get("update_fields")) == ["last_login"]:
+def sync_ldap_user(sender, instance, update_fields=[], **kwargs):
+    if update_fields and list(update_fields) == ["last_login"]:
         # skip update if last_login was the only change
         return
     try:
