@@ -8,7 +8,6 @@
   <h1>Profile</h1>
   <form method="post" action="">
     {% csrf_token %}
-    {% bootstrap_form user_form %}
     {% bootstrap_form member_form %}
     <div class="form-actions">
       <button type="submit" class="btn btn-primary">Save</button>

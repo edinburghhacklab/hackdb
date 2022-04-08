@@ -34,7 +34,8 @@ class Member(models.Model):
 
     user = models.OneToOneField(get_user_model(), on_delete=models.PROTECT)
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
-    real_name = models.CharField(max_length=255, verbose_name="Real name")
+    real_name = models.CharField(max_length=255)
+    display_name = models.CharField(max_length=255, blank=True)
 
     # contact details
     address_street1 = models.CharField(
@@ -75,7 +76,7 @@ class Member(models.Model):
         ]
 
     def __str__(self):
-        return self.real_name or self.user.get_full_name()
+        return self.real_name or self.display_name or self.user.get_full_name()
 
     def clean(self):
         if self.membership_number is None:

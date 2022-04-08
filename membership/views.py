@@ -16,17 +16,12 @@ from django.views.decorators.http import require_GET, require_POST
 from .models import Member
 
 
-class UserSelfForm(ModelForm):
-    class Meta:
-        model = get_user_model()
-        fields = ["first_name", "last_name"]
-
-
 class MemberSelfForm(ModelForm):
     class Meta:
         model = Member
         fields = [
             "real_name",
+            "display_name",
             "address_street1",
             "address_street2",
             "address_street3",
@@ -41,7 +36,6 @@ class MemberSelfForm(ModelForm):
 @login_required
 def profile(request):
     if request.method == "POST":
-        user_form = UserSelfForm(request.POST, prefix="user", instance=request.user)
         try:
             member_form = MemberSelfForm(prefix="member", instance=request.user.member)
         except Member.DoesNotExist:
@@ -51,20 +45,17 @@ def profile(request):
         member_form = MemberSelfForm(
             request.POST, prefix="member", instance=request.user.member
         )
-        if user_form.is_valid() and member_form.is_valid():
-            user_form.save()
+        if member_form.is_valid():
             member_form.save()
 
             messages.add_message(request, messages.SUCCESS, "Member profile updated.")
             return HttpResponseRedirect(reverse("home"))
     else:
-        user_form = UserSelfForm(prefix="user", instance=request.user)
         try:
             member_form = MemberSelfForm(prefix="member", instance=request.user.member)
         except Member.DoesNotExist:
             member_form = MemberSelfForm(prefix="member")
     context = {
-        "user_form": user_form,
         "member_form": member_form,
     }
     return render(request, "membership/profile.html", context)
