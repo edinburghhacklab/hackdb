@@ -21,28 +21,28 @@ def sync_ldap_user(sender, instance, **kwargs):
     try:
         sync_user(instance)
     except Exception as e:
-        print(f"exception in ldapsync of {instance}: {e}")
+        print(f"Exception in ldapsync of {instance}: {e}")
 
 
 @receiver(post_save, sender=PosixUser)
 def sync_ldap_posix_user(sender, instance, **kwargs):
     try:
         sync_user(instance.user)
-    except:
-        pass
+    except Exception as e:
+        print(f"Exception in ldapsync of {instance}: {e}")
 
 
 @receiver(post_save, sender=Group)
 def sync_ldap_group(sender, instance, **kwargs):
     try:
         sync_group(instance)
-    except:
-        pass
+    except Exception as e:
+        print(f"Exception in ldapsync of {instance}: {e}")
 
 
 @receiver(post_save, sender=PosixGroup)
 def sync_ldap_posix_group(sender, instance, **kwargs):
     try:
         sync_group(instance.group)
-    except:
-        pass
+    except Exception as e:
+        print(f"Exception in ldapsync of {instance}: {e}")
