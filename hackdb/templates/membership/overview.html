@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% load django_bootstrap5 %}
-
 {% block content %}
 
 <div class="container">
@@ -14,6 +12,7 @@
   {% endif %}
   </p>
 
+  {% if user.membershipterm_set.exists %}
   <table class="table table-striped">
     <thead>
       <th>Start</th>
@@ -30,6 +29,8 @@
       {% endfor %}
     </tbody>
   </table>
+  {% endif %}
+
 </div>
 
 {% endblock %}
