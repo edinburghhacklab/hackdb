@@ -50,6 +50,13 @@ class NFCTokenAdmin(admin.ModelAdmin):
         "user",
         "-last_seen",
     )
+    search_fields = (
+        "uid",
+        "last_location",
+        "user__username",
+        "user__first_name",
+        "user__last_name",
+    )
 
     def name(self, obj):
         if obj.user:
@@ -71,7 +78,16 @@ class NFCTokenLogAdmin(admin.ModelAdmin):
     list_filter = ("location", "authorized", "ltype", RecentDaysListFilter)
     actions = None
     ordering = ("-timestamp",)
-    search_fields = ("uid", "location", "name", "token_description")
+    search_fields = (
+        "uid",
+        "location",
+        "name",
+        "username",
+        "token_description",
+        "user__username",
+        "user__first_name",
+        "user__last_name",
+    )
 
 
 class NFCTokenInline(admin.TabularInline):

@@ -85,6 +85,7 @@ class NFCTokenLog(models.Model):
     )
     location = models.CharField(max_length=255, editable=False)
     uid = models.CharField(max_length=32, editable=False)
+    username = models.CharField(max_length=255, blank=True, editable=False)
     name = models.CharField(max_length=255, blank=True, editable=False)
     token_description = models.CharField(max_length=255, blank=True, editable=False)
     authorized = models.BooleanField(editable=False, null=True, blank=True)

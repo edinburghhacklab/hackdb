@@ -175,7 +175,8 @@ def token_sighting(token, location, authorized, type_="unknown", timestamp=None)
     tokenlog.token_description = tokenlog.token.description
     tokenlog.user = tokenlog.token.user
     if tokenlog.user:
-        tokenlog.name = str(tokenlog.user.username or tokenlog.user.email)
+        tokenlog.username = tokenlog.user.username
+        tokenlog.name = tokenlog.user.get_full_name()
     tokenlog.full_clean()
     tokenlog.save()
 
