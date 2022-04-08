@@ -5,15 +5,30 @@
 {% block content %}
 
 <div class="container">
+
   <h1>Profile</h1>
+
+  <p>
+    For <i>real name</i>, please enter the name that you would use on a
+    utility bill. We need this because we have a legal obligation to keep
+    a register of members.
+  </p>
+
+  <p>
+    For <i>display name</i>, enter the name that you would like other Hacklab
+    members to use when referring to you. Normally this would include the
+    surname. If you leave this blank we will use your real name.
+  </p>
+
   <form method="post" action="">
     {% csrf_token %}
-    {% bootstrap_form member_form %}
+    {% bootstrap_form member_form layout='horizontal' %}
     <div class="form-actions">
       <button type="submit" class="btn btn-primary">Save</button>
       <a href="{% url 'home' %}" class="btn btn-secondary" role="button">Cancel</a>
     </div>
   </form>
+
 </div>
 
 {% endblock %}
