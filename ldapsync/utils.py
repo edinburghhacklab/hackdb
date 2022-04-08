@@ -63,7 +63,6 @@ def sync_user(user, dry_run=False):
         settings.LDAPSYNC_USERS_BASE_DN, domain_sid=settings.LDAPSYNC_DOMAIN_SID
     )
     dn, entry = user_serializer.serialize(user)
-    print(dn, entry)
     server = LDAP(dry_run=dry_run)
     server.sync_entry(dn, entry)
 
@@ -78,7 +77,6 @@ def sync_group(group, dry_run=False):
         settings.LDAPSYNC_POSIX_GROUPS_BASE_DN
     )
     dn, entry = group_serializer.serialize(group)
-    print(dn, entry)
     if group.posix:
         posix_dn, posix_entry = posix_group_serializer.serialize(group)
         print(posix_dn, posix_entry)
