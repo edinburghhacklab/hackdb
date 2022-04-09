@@ -30,7 +30,11 @@ class MemberSelfForm(ModelForm):
             "address_postalcode",
             "address_country",
             "phone",
+            "privacy",
         ]
+        help_texts = {
+            "privacy": "This preference will apply to your access token logs.",
+        }
 
 
 @login_required

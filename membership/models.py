@@ -32,6 +32,15 @@ class Member(models.Model):
         (ALUMNI, "Alumni"),
     ]
 
+    PRIVACY_LOW = 0
+    PRIVACY_MEDIUM = 1
+    PRIVACY_HIGH = 2
+    PRIVACY_CHOICES = (
+        (PRIVACY_LOW, "Low - Public"),
+        (PRIVACY_MEDIUM, "Medium - Members Only"),
+        (PRIVACY_HIGH, "Paranoid - Trust No One"),
+    )
+
     user = models.OneToOneField(get_user_model(), on_delete=models.PROTECT)
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     real_name = models.CharField(max_length=255)
@@ -62,6 +71,9 @@ class Member(models.Model):
     membership_status = models.SmallIntegerField(
         default=NON_MEMBER, choices=MEMBERSHIP_STATUS_CHOICES, editable=False
     )
+
+    # privacy
+    privacy = models.PositiveSmallIntegerField(default=1, choices=PRIVACY_CHOICES)
 
     # admin
     notes = models.TextField(
@@ -128,6 +140,17 @@ class Member(models.Model):
                     self.user.groups.remove(members_group)
         except Group.DoesNotExist:
             print(f"members group does not exist, ignoring")
+
+        try:
+            datasharing_group = Group.objects.get(name="sharealike")
+            if self.privacy > 1:
+                if self.user.groups.contains(datasharing_group):
+                    self.user.groups.remove(datasharing_group)
+            else:
+                if not self.user.groups.contains(datasharing_group):
+                    self.user.groups.add(datasharing_group)
+        except Group.DoesNotExist:
+            print(f"sharealike group does not exist, ignoring")
 
         if new_status != old_status:
             print(f"fix {self.user}: {old_status} -> {new_status}")

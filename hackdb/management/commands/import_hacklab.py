@@ -69,8 +69,8 @@ class Command(BaseCommand):
         sharealike = Group.objects.create(name="sharealike")
         GroupProperties.objects.create(
             group=sharealike,
-            description="Users in this group will share their door access events with MQTT",
-            self_service=True,
+            description="Users in this group are sharing their door access events with MQTT. Use the privacy setting in your profile to change this.",
+            self_service=False,
         )
 
         for record in data:
@@ -119,6 +119,7 @@ class Command(BaseCommand):
                 member.membership_number = record["fields"]["membership_number"]
                 member.membership_suspended = record["fields"]["membership_suspended"]
                 member.membership_status = record["fields"]["membership_status"]
+                member.privacy = record["fields"]["privacy"]
                 member.save()
                 user.first_name = member.display_name or member.real_name
                 user.save()
@@ -135,8 +136,6 @@ class Command(BaseCommand):
                     address.verified = True
                     address.primary = True
                     address.save()
-                if record["fields"]["privacy"] < 2:
-                    user.groups.add(sharealike)
 
         for record in data:
             if record["model"] == "discorduser.discorduser":
