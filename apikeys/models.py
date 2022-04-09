@@ -22,7 +22,7 @@ class APIKey(models.Model):
         unique=True,
         default=generate_key,
     )
-    description = models.CharField(max_length=255, blank=True)
+    description = models.CharField(max_length=255)
     enabled = models.BooleanField(default=True)
     expires = models.DateTimeField(null=True, blank=True)
     permissions = models.ManyToManyField(
