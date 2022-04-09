@@ -21,6 +21,10 @@ from django.views.decorators.http import require_POST
 from .models import DiscordUser, DiscordVerificationToken
 
 
+def get_groups(user):
+    return sorted(group.name for group in user.groups.all())
+
+
 @never_cache
 @permission_required("discorduser.get_discord_users")
 def api_get_users(request):
@@ -28,8 +32,8 @@ def api_get_users(request):
     for discord_user in DiscordUser.objects.all():
         data[discord_user.discord_id] = {
             "username": discord_user.user.username,
-            "groups": discord_user.user.profile.get_groups(),
-            "name": discord_user.user.profile.display_name,
+            "groups": get_groups(discord_user.user),
+            "name": discord_user.user.get_full_name(),
         }
     return JsonResponse(data)
 
@@ -41,8 +45,8 @@ def api_get_user(request, discord_id):
     return JsonResponse(
         {
             "username": discord_user.user.username,
-            "groups": discord_user.user.profile.get_groups(),
-            "name": discord_user.user.profile.display_name,
+            "groups": get_groups(discord_user.user),
+            "name": discord_user.user.get_full_name(),
         }
     )
 
