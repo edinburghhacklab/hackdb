@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import include, path
 from django.views.generic import TemplateView
 
+import discorduser.views
 import membership.views
 import nfctokens.views
 
@@ -29,4 +30,5 @@ urlpatterns = [
     path("api/1/nfc_tokens", nfctokens.views.nfc_tokens),
     path("api/1/xero_contacts", membership.views.xero_contacts_json),
     path("api/1/xero_update_uuid", membership.views.xero_update_uuid),
+    path("discorduser/api/users", discorduser.views.api_get_users),
 ]
