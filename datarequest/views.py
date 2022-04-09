@@ -25,11 +25,14 @@ def obj_to_dict(obj, ignore=["id"], redact=["password"]):
         elif isinstance(field, RelatedField):
             pass
         elif isinstance(field, Field):
-            value = getattr(obj, field.name)
-            if type(value) in [bool, float, int, NoneType]:
-                data[field.name] = value
+            if hasattr(obj, f"get_{field.name}_display"):
+                data[field.name] = getattr(obj, f"get_{field.name}_display")()
             else:
-                data[field.name] = str(value)
+                value = getattr(obj, field.name)
+                if type(value) in [bool, float, int, NoneType]:
+                    data[field.name] = value
+                else:
+                    data[field.name] = str(value)
 
     return data
 
