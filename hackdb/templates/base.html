@@ -34,7 +34,7 @@
             {% url 'socialaccount_connections' as socialaccount_connections_url %}
             {% if socialaccount_connections_url %}
               <li><a class="dropdown-item" href="{{ socialaccount_connections_url }}">Account connections</a></li>
-              {% endif %}
+            {% endif %}
             <li><a class="dropdown-item" href="{% url 'datarequest' %}">Download personal data</a></li>
             {% if user.is_staff %}
               <li><hr class="dropdown-divider"></li>
