@@ -37,7 +37,21 @@
 <div class="buttonHolder py-1">
       <button class="btn btn-primary" type="submit" name="action_primary" >{% trans 'Make Primary' %}</button>
       <button class="btn btn-secondary" type="submit" name="action_send" >{% trans 'Re-send Verification' %}</button>
-      <button class="btn btn-secondary" type="submit" name="action_remove" >{% trans 'Remove' %}</button>
+      <a href="#" class="btn btn-secondary" name="action_remove" data-bs-toggle="modal" data-bs-target="#modal-confirm-remove">{% trans 'Remove' %}</a>
+</div>
+
+<div class="modal" id="modal-confirm-remove">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p>{% trans 'Do you really want to remove the selected e-mail address?' %}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" name="action_remove">Yes</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 </fieldset>
