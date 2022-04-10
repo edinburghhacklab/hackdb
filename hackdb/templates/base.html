@@ -31,7 +31,10 @@
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="{% url 'account_change_password' %}">Change password</a></li>
             <li><a class="dropdown-item" href="{% url 'account_email' %}">Change email address</a></li>
-            <li><a class="dropdown-item" href="{% url 'socialaccount_connections' %}">Account connections</a></li>
+            {% url 'socialaccount_connections' as socialaccount_connections_url %}
+            {% if socialaccount_connections_url %}
+              <li><a class="dropdown-item" href="{{ socialaccount_connections_url }}">Account connections</a></li>
+              {% endif %}
             <li><a class="dropdown-item" href="{% url 'datarequest' %}">Download personal data</a></li>
             {% if user.is_staff %}
               <li><hr class="dropdown-divider"></li>
@@ -39,7 +42,12 @@
               </li>
             {% endif %}
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{% url 'account_logout' %}"><i class="bi-box-arrow-right"></i> {% trans "Log out" %}</a></li>
+            <li>
+              <form method="POST" action="{% url 'account_logout' %}">
+                {% csrf_token %}
+                <button class="btn btn-text dropdown-item" type="submit"><i class="bi-box-arrow-right"></i> {% trans "Log out" %}</a></button>
+              </form>
+            </li>
           </ul>
         </li>
       {% else %}
