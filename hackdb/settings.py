@@ -156,6 +156,9 @@ SITE_ID = 1
 
 LOGIN_REDIRECT_URL = "home"
 
+# HMAC confirmations don't obey the cooldown period
+ACCOUNT_EMAIL_CONFIRMATION_HMAC = False
+
 SOCIALACCOUNT_PROVIDERS = {}
 
 COUNTRIES_FIRST = ["GB"]
