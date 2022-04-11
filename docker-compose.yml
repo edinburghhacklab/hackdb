@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+
+  hackdb:
+    build: .
+    ports:
+    - 8000:8000
+    volumes:
+    - database:/data/database
+    - static:/data/static
+    #- ./mydockersettings.py:/data/config/settings.py:ro
+    environment:
+      DEBUG: "True"
+      SECRET_KEY: "change-me"
+
+volumes:
+  database:
+  static:
