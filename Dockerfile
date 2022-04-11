@@ -14,12 +14,15 @@ RUN apt-get update \
 
 COPY . ./
 
-RUN useradd django \
+ENV DJANGO_SETTINGS_MODULE=hackdb.settings_docker
+
+RUN rm -f db.sqlite3 local_settings.py settings_local.py \
+    && useradd django \
     && python manage.py check \
-    && python manage.py makemigrations \
-    && echo yes | python manage.py collectstatic -c
+    && python manage.py makemigrations
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 EXPOSE 8000
+VOLUME [ "/data/config", "/data/database", "/data/static" ]
 CMD ["/docker-entrypoint.sh"]

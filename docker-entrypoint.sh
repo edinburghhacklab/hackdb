@@ -6,11 +6,10 @@
 
 set -e
 
-mkdir -p /data/config /data/generated /data/database
-chown -R django:django /data
+chown -R django:django /data/database /data/static || true
 
-cd /data
-runuser -u django python /usr/src/app/manage.py check
-runuser -u django python /usr/src/app/manage.py makemigrations
-runuser -u django python /usr/src/app/manage.py migrate
-exec runuser -u django python /usr/src/app/manage.py runserver 0.0.0.0:8000
+runuser -u django -- python manage.py check
+runuser -u django -- python manage.py collectstatic --clear --no-input
+runuser -u django -- python manage.py makemigrations
+runuser -u django -- python manage.py migrate
+exec runuser -u django -- python manage.py runserver 0.0.0.0:8000
