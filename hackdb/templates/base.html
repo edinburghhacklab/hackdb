@@ -1,7 +1,7 @@
 {% extends 'django_bootstrap5/bootstrap5.html' %}
 
 {% load django_bootstrap5 %}
-{% load account %}
+{% load account socialaccount %}
 {% load i18n %}
 
 {% block bootstrap5_title %}{% block title %}HackDB{% endblock %}{% endblock %}
@@ -31,9 +31,9 @@
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="{% url 'account_change_password' %}">Change password</a></li>
             <li><a class="dropdown-item" href="{% url 'account_email' %}">Change email address</a></li>
-            {% url 'socialaccount_connections' as socialaccount_connections_url %}
-            {% if socialaccount_connections_url %}
-              <li><a class="dropdown-item" href="{{ socialaccount_connections_url }}">Account connections</a></li>
+            {% get_providers as socialaccount_providers %}
+            {% if socialaccount_providers %}
+              <li><a class="dropdown-item" href="{% url 'socialaccount_connections' %}">Account connections</a></li>
             {% endif %}
             <li><a class="dropdown-item" href="{% url 'datarequest' %}">Download personal data</a></li>
             {% if user.is_staff %}
