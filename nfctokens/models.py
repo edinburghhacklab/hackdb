@@ -57,6 +57,7 @@ class NFCToken(models.Model):
     recent_objects = RecentTokenManager()
 
     class Meta:
+        verbose_name = "NFC Token"
         permissions = [
             ("auth_token", "Can authenticate a token"),
             ("export_tokens", "Can export all tokens"),
@@ -92,6 +93,9 @@ class NFCTokenLog(models.Model):
     ltype = models.CharField(
         max_length=32, editable=False, default="unknown", verbose_name="Type"
     )
+
+    class Meta:
+        verbose_name = "NFC Token Log"
 
     def save(self, *args, **kwargs):
         if self.id is None:
