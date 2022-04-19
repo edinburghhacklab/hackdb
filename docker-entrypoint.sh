@@ -6,10 +6,21 @@
 
 set -e
 
+if [ -n "$1" -a "$1" != "uwsgi" ]; then
+  exec $@
+  exit
+fi
+
 chown -R django:django /data/database /data/static || true
 
 runuser -u django -- python manage.py check
 runuser -u django -- python manage.py collectstatic --clear --no-input
 runuser -u django -- python manage.py makemigrations
 runuser -u django -- python manage.py migrate
-exec runuser -u django -- python manage.py runserver 0.0.0.0:8000
+
+if [ "$1" = "uwsgi" ]; then
+  shift
+  exec runuser -u django -- uwsgi $@
+else
+  exec runuser -u django -- python manage.py runserver 0.0.0.0:8000
+fi
