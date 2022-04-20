@@ -40,7 +40,7 @@ def obj_to_dict(obj, ignore=["id"], redact=["password"]):
 
 
 def user_to_dict(user):
-    data = {"user": obj_to_dict(user, redact=[])}
+    data = {"user": obj_to_dict(user, ignore=["id", "last_login"], redact=[])}
 
     try:
         data["member"] = obj_to_dict(user.member)
