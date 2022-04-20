@@ -13,6 +13,8 @@ from django.core.management.base import BaseCommand
 from django.db.models.fields import Field
 from django.db.models.fields.related import RelatedField
 
+from apikeys.models import APIKey
+
 
 def obj_to_dict(obj, ignore=["id"], redact=["password"]):
     data = {}
@@ -61,6 +63,9 @@ def user_to_dict(user):
         for groupownership in user.groupownerships.order_by("group__name")
     )
 
+    data["permissions"] = list(
+        str(permission) for permission in user.user_permissions.all()
+    )
     data["emailaddresses"] = list(map(obj_to_dict, user.emailaddress_set.all()))
     data["membershipterms"] = list(map(obj_to_dict, user.membershipterm_set.all()))
     data["nfctokens"] = list(map(obj_to_dict, user.nfctokens.all()))
@@ -85,6 +90,18 @@ def group_to_dict(group):
 
     data["members"] = list(user.username for user in group.user_set.all())
     data["owners"] = list(ownership.user.username for ownership in group.owners.all())
+    data["permissions"] = list(
+        str(permission) for permission in group.permissions.all()
+    )
+
+    return data
+
+
+def apikey_to_dict(apikey):
+    data = {"apikey": obj_to_dict(apikey)}
+    data["permissions"] = list(
+        str(permission) for permission in apikey.permissions.all()
+    )
 
     return data
 
@@ -96,6 +113,7 @@ class Command(BaseCommand):
         output = {
             "users": [],
             "groups": [],
+            "apikeys": [],
         }
 
         for user in get_user_model().objects.order_by("username"):
@@ -103,5 +121,8 @@ class Command(BaseCommand):
 
         for group in Group.objects.order_by("name"):
             output["groups"].append(group_to_dict(group))
+
+        for apikey in APIKey.objects.order_by("key"):
+            output["apikeys"].append(apikey_to_dict(apikey))
 
         json.dump(output, sys.stdout, indent=2, sort_keys=True)
