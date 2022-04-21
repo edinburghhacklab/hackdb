@@ -44,6 +44,8 @@ def modlist(old, new, ignore_attr_types=[], debug=False):
                 mods[attr] = [(ldap3.MODIFY_REPLACE, new[attr])]
         else:
             # delete
+            if debug:
+                print(f"{attr}: {old[attr]} -> (none)")
             mods[attr] = [(ldap3.MODIFY_DELETE, [])]
     for attr in new.keys():
         if attr in ignore_attr_types:
@@ -52,6 +54,8 @@ def modlist(old, new, ignore_attr_types=[], debug=False):
             pass
         else:
             # add
+            if debug:
+                print(f"{attr}: (none) -> {new[attr]}")
             mods[attr] = [(ldap3.MODIFY_ADD, new[attr])]
     return mods
 
