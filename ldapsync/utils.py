@@ -134,7 +134,7 @@ class LDAP:
                     self.connection.delete(dn)
                     print(self.connection.result)
             else:
-                mods = modlist(old_entry, normalise_entry(entry))
+                mods = modlist(old_entry, normalise_entry(entry), debug=self.debug)
                 if mods:
                     print(f"CHANGES {dn} {mods}")
                     if not self.dry_run:
