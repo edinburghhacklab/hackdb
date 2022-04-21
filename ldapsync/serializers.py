@@ -120,8 +120,11 @@ def serialize_group(group, base_dn, users_base_dn):
         entry["member"].append(f"uid={user.username},{users_base_dn}")
     if len(entry["member"]) == 0:
         return dn, None
-    if group.properties.description:
-        entry["description"] = [group.properties.description]
+    try:
+        if group.properties.description:
+            entry["description"] = [group.properties.description]
+    except:
+        pass
     return dn, entry
 
 
