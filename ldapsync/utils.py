@@ -40,7 +40,7 @@ def modlist(old, new, ignore_attr_types=[], debug=False):
             else:
                 # modify
                 if debug:
-                    print(f"attr: {old[attr]} -> {new[attr]}")
+                    print(f"{attr}: {old[attr]} -> {new[attr]}")
                 mods[attr] = [(ldap3.MODIFY_REPLACE, new[attr])]
         else:
             # delete
@@ -79,7 +79,6 @@ def sync_group(group, dry_run=False):
     dn, entry = group_serializer.serialize(group)
     if group.posix:
         posix_dn, posix_entry = posix_group_serializer.serialize(group)
-        print(posix_dn, posix_entry)
     server = LDAP(dry_run=dry_run)
     server.sync_entry(dn, entry)
     if group.posix:
@@ -117,7 +116,7 @@ class LDAP:
 
     def sync_entry(self, dn, entry):
         if self.debug:
-            print(dn, entry)
+            print(f"--- {dn} {entry} ---")
         self.seen[dn] = True
         self.connection.search(
             search_base=dn,
