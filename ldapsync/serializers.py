@@ -112,7 +112,7 @@ def serialize_user(user, base_dn, domain_sid=None):
 def serialize_group(group, base_dn, users_base_dn):
     dn = f"cn={group.name},{base_dn}"
     entry = {
-        "objectClass": ["top", "groupOfNames"],
+        "objectClass": ["top", "groupOfNames", "extensibleObject"],
         "cn": [group.name],
         "member": [],
     }
@@ -120,6 +120,8 @@ def serialize_group(group, base_dn, users_base_dn):
         entry["member"].append(f"uid={user.username},{users_base_dn}")
     if len(entry["member"]) == 0:
         return dn, None
+    if group.properties.description:
+        entry["description"] = [group.properties.description]
     return dn, entry
 
 
