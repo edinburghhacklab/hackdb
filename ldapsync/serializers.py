@@ -97,6 +97,10 @@ def serialize_user(user, base_dn, domain_sid=None):
             entry["sshPublicKey"] = []
             for sshkey in user.sshkey_set.filter(enabled=True):
                 entry["sshPublicKey"].append(sshkey.key.encode())
+        if len(user.nfctokens.filter(enabled=True)) > 0:
+            entry["ehlabNfcToken"] = []
+            for nfctoken in user.nfctokens.filter(enabled=True):
+                entry["ehlabNfcToken"].append(nfctoken.uid)
         if user.posix.password:
             entry["userPassword"] = [b"{CRYPT}" + user.posix.password.encode()]
     return dn, entry
