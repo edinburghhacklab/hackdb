@@ -116,7 +116,8 @@ class LDAP:
 
     def sync_entry(self, dn, entry):
         if self.debug:
-            print(f"--- {dn} {entry} ---")
+            print(f"--- {dn} ---")
+            print(entry)
         self.seen[dn] = True
         self.connection.search(
             search_base=dn,
