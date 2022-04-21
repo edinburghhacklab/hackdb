@@ -6,7 +6,7 @@
 
 set -e
 
-if [ -n "$1" -a "$1" != "uwsgi" ]; then
+if [ -n "$1" -a "$1" != "gunicorn" ]; then
   exec $@
   exit
 fi
@@ -18,9 +18,9 @@ runuser -u django -- python manage.py collectstatic --clear --no-input
 runuser -u django -- python manage.py makemigrations
 runuser -u django -- python manage.py migrate
 
-if [ "$1" = "uwsgi" ]; then
+if [ "$1" = "gunicorn" ]; then
   shift
-  exec runuser -u django -- uwsgi $@
+  exec runuser -u django -- gunicorn $@
 else
   exec runuser -u django -- python manage.py runserver 0.0.0.0:8000
 fi

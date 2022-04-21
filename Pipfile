@@ -14,7 +14,7 @@ passlib = "*"
 ldif = "*"
 ldap3 = "*"
 requests = "*"
-uwsgi = "*"
+gunicorn = "*"
 
 [dev-packages]
 
