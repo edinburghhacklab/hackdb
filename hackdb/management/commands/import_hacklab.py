@@ -125,11 +125,11 @@ class Command(BaseCommand):
                 user.save()
                 if record["fields"]["posix_uid"]:
                     user.posix.uid = record["fields"]["posix_uid"]
-                    if record["fields"]["password_ldap"].upper().startswith("{CRYPT}"):
-                        user.posix.password = record["fields"]["password_ldap"][7:]
-                    elif record["fields"]["password_ldap"].upper().startswith("{SSHA}"):
-                        user.posix.password = record["fields"]["password_ldap"]
-                    user.posix.save()
+                if record["fields"]["password_ldap"].upper().startswith("{CRYPT}"):
+                    user.posix.password = record["fields"]["password_ldap"][7:]
+                elif record["fields"]["password_ldap"].upper().startswith("{SSHA}"):
+                    user.posix.password = record["fields"]["password_ldap"]
+                user.posix.save()
                 if (
                     record["fields"]["verified_email"]
                     and record["fields"]["verified_email"].lower() == user.email.lower()
