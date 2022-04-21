@@ -14,7 +14,7 @@ from discorduser.models import DiscordUser
 from membership.models import Member, MembershipTerm
 from mailman2.models import ChangeOfAddress, MailingList, GroupPolicy
 from groupadmin.models import GroupOwnership, GroupProperties
-from posixusers.models import PosixUser, SSHKey
+from posixusers.models import SSHKey
 from nfctokens.models import NFCToken, NFCTokenLog
 
 
@@ -123,14 +123,13 @@ class Command(BaseCommand):
                 member.save()
                 user.first_name = member.display_name or member.real_name
                 user.save()
-                posix = PosixUser(user=user)
                 if record["fields"]["posix_uid"]:
-                    posix.uid = record["fields"]["posix_uid"]
+                    user.posix.uid = record["fields"]["posix_uid"]
                 if record["fields"]["password_ldap"].upper().startswith("{CRYPT}"):
-                    posix.password = record["fields"]["password_ldap"][7:]
+                    user.posix.password = record["fields"]["password_ldap"][7:]
                 elif record["fields"]["password_ldap"].upper().startswith("{SSHA}"):
-                    posix.password = record["fields"]["password_ldap"]
-                posix.save()
+                    user.posix.password = record["fields"]["password_ldap"]
+                user.posix.save()
                 if (
                     record["fields"]["verified_email"]
                     and record["fields"]["verified_email"].lower() == user.email.lower()
