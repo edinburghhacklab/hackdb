@@ -116,7 +116,7 @@ def serialize_group(group, base_dn, users_base_dn):
         "cn": [group.name],
         "member": [],
     }
-    for user in group.user_set.all():
+    for user in group.user_set.order_by("username"):
         entry["member"].append(f"uid={user.username},{users_base_dn}")
     if len(entry["member"]) == 0:
         return dn, None
@@ -136,7 +136,7 @@ def serialize_posixgroup(group, base_dn):
         "gidNumber": [group.posix.gid],
         "memberUid": [],
     }
-    for user in group.user_set.all():
+    for user in group.user_set.order_by("username"):
         entry["memberUid"].append(user.username)
     if len(entry["memberUid"]) == 0:
         return dn, None
