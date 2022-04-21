@@ -102,7 +102,10 @@ def serialize_user(user, base_dn, domain_sid=None):
             for nfctoken in user.nfctokens.filter(enabled=True):
                 entry["ehlabNfcToken"].append(nfctoken.uid)
         if user.posix.password:
-            entry["userPassword"] = [b"{CRYPT}" + user.posix.password.encode()]
+            if user.posix.password.lower().startswith("{ssha}"):
+                entry["userPassword"] = [user.posix.password.encode()]
+            else:
+                entry["userPassword"] = [b"{CRYPT}" + user.posix.password.encode()]
     return dn, entry
 
 
