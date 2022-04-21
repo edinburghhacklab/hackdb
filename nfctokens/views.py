@@ -9,7 +9,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import (
     login_required,
     permission_required,
-    user_passes_test,
 )
 from django.forms import ModelForm
 from django.forms.widgets import TextInput
@@ -20,10 +19,6 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_POST
 
 from .models import NFCToken, NFCTokenLog
-
-
-def can_configure_tokens(user):
-    return True
 
 
 class TokenAddForm(ModelForm):
@@ -47,7 +42,6 @@ class TokenEditForm(ModelForm):
 
 
 @login_required
-@user_passes_test(can_configure_tokens)
 def mytokens(request):
     context = {
         "tokens": request.user.nfctokens.all(),
@@ -56,7 +50,7 @@ def mytokens(request):
 
 
 @login_required
-@user_passes_test(can_configure_tokens)
+@permission_required("nfctokens.self_configure_token", raise_exception=True)
 def mytokens_add(request, uid=None):
     if request.method == "POST":
         try:
@@ -85,7 +79,7 @@ def mytokens_add(request, uid=None):
 
 
 @login_required
-@user_passes_test(can_configure_tokens)
+@permission_required("nfctokens.self_configure_token", raise_exception=True)
 def mytokens_edit(request, uid):
     token = request.user.nfctokens.get(uid=uid)
     if request.method == "POST":
@@ -101,14 +95,14 @@ def mytokens_edit(request, uid):
 
 
 @login_required
-@user_passes_test(can_configure_tokens)
+@permission_required("nfctokens.self_configure_token", raise_exception=True)
 def mytokens_claim(request):
     context = {"tokens": NFCToken.recent_objects.all()}
     return render(request, "nfctokens/mytokens_claim.html", context)
 
 
 @login_required
-@user_passes_test(can_configure_tokens)
+@permission_required("nfctokens.self_configure_token", raise_exception=True)
 def mytokens_delete(request, uid):
     token = request.user.nfctokens.get(uid=uid)
     if request.method == "POST":
@@ -122,7 +116,7 @@ def mytokens_delete(request, uid):
 
 
 @login_required
-@user_passes_test(can_configure_tokens)
+@permission_required("nfctokens.self_configure_token", raise_exception=True)
 @require_POST
 def mytokens_enable(request, uid):
     token = request.user.nfctokens.get(uid=uid)
@@ -133,7 +127,7 @@ def mytokens_enable(request, uid):
 
 
 @login_required
-@user_passes_test(can_configure_tokens)
+@permission_required("nfctokens.self_configure_token", raise_exception=True)
 @require_POST
 def mytokens_disable(request, uid):
     token = request.user.nfctokens.get(uid=uid)
@@ -144,7 +138,7 @@ def mytokens_disable(request, uid):
 
 
 @login_required
-@user_passes_test(can_configure_tokens)
+@permission_required("nfctokens.self_view_tokenlog", raise_exception=True)
 def mytokenlogs(request):
     context = {
         "tokens": request.user.nfctokenlogs.all().order_by("-timestamp"),

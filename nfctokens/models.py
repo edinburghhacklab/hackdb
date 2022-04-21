@@ -61,6 +61,7 @@ class NFCToken(models.Model):
         permissions = [
             ("auth_token", "Can authenticate a token"),
             ("export_tokens", "Can export all tokens"),
+            ("self_configure_token", "Can configure own NFC Token"),
         ]
 
     def __str__(self):
@@ -96,6 +97,9 @@ class NFCTokenLog(models.Model):
 
     class Meta:
         verbose_name = "NFC Token Log"
+        permissions = [
+            ("self_view_tokenlog", "Can view own NFC Token Log"),
+        ]
 
     def save(self, *args, **kwargs):
         if self.id is None:
