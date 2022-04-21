@@ -99,7 +99,7 @@ def serialize_user(user, base_dn, domain_sid=None):
                 entry["sshPublicKey"].append(sshkey.key.encode())
         if len(user.nfctokens.filter(enabled=True)) > 0:
             entry["ehlabNfcToken"] = []
-            for nfctoken in user.nfctokens.filter(enabled=True):
+            for nfctoken in user.nfctokens.filter(enabled=True).order_by("uid"):
                 entry["ehlabNfcToken"].append(nfctoken.uid)
         if user.posix.password:
             if user.posix.password.lower().startswith("{ssha}"):
