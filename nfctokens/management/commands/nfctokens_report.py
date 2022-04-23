@@ -12,6 +12,12 @@ from django.utils import timezone
 
 
 class Command(BaseCommand):
+    help = "Per-user report of NFC Token assignment and usage"
+
+    def add_arguments(self, parser):
+        parser.add_argument("--reverse", action="store_true")
+        parser.add_argument("--sort", type=str, nargs=1)
+
     def handle(self, *args, **options):
         last_1year = timezone.now() - datetime.timedelta(days=365)
         last_90d = timezone.now() - datetime.timedelta(days=90)
@@ -43,6 +49,10 @@ class Command(BaseCommand):
                 ]
             )
 
-        output.sort(key=lambda row: row[3:], reverse=True)
+        try:
+            sort_column = headers.index(options["sort"][0])
+        except ValueError:
+            sort_column = 0
+        output.sort(key=lambda row: row[sort_column], reverse=options["reverse"])
 
         print(tabulate.tabulate(output, headers=headers))
