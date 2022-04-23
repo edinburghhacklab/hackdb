@@ -68,9 +68,13 @@ def user_to_dict(user):
     )
     data["emailaddresses"] = list(map(obj_to_dict, user.emailaddress_set.all()))
     data["membershipterms"] = list(map(obj_to_dict, user.membershipterm_set.all()))
-    data["nfctokens"] = list(map(obj_to_dict, user.nfctokens.all()))
-    # data["nfctokenlogs"] = list(map(obj_to_dict, user.nfctokenlogs.all()))
     data["sshkeys"] = list(map(obj_to_dict, user.sshkey_set.all()))
+
+    data["nfctokens"] = list(
+        obj_to_dict(nfctoken, ignore=["id", "last_location", "last_seen"])
+        for nfctoken in user.nfctokens.order_by("uid")
+    )
+    # data["nfctokenlogs"] = list(map(obj_to_dict, user.nfctokenlogs.all()))
 
     return data
 
