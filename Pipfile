@@ -15,6 +15,7 @@ ldif = "*"
 ldap3 = "*"
 requests = "*"
 gunicorn = "*"
+tabulate = "*"
 
 [dev-packages]
 
