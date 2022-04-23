@@ -133,27 +133,35 @@ class LDAP:
             old_entry = normalise_entry(self.connection.response[0]["attributes"])
             if entry is None:
                 # server entry should be deleted
-                print(f"DELETE {dn}")
+                if self.debug:
+                    print(f"DELETE {dn}")
                 if not self.dry_run:
                     self.connection.delete(dn)
-                    print(self.connection.result)
+                    if self.debug:
+                        print(self.connection.result)
             else:
                 mods = modlist(old_entry, normalise_entry(entry), debug=self.debug)
                 if mods:
-                    print(f"CHANGES {dn} {mods}")
+                    if self.debug:
+                        print(f"CHANGES {dn} {mods}")
                     if not self.dry_run:
                         self.connection.modify(dn, mods)
-                        print(self.connection.result)
+                        if self.debug:
+                            print(self.connection.result)
                 else:
-                    print(f"NO CHANGE {dn}")
+                    if self.debug:
+                        print(f"NO CHANGE {dn}")
         else:
             if entry is None:
-                print(f"NO CHANGE {dn}")
+                if self.debug:
+                    print(f"NO CHANGE {dn}")
             else:
-                print(f"ADD {dn}")
+                if self.debug:
+                    print(f"ADD {dn}")
                 if not self.dry_run:
                     self.connection.add(dn, attributes=entry)
-                    print(self.connection.result)
+                    if self.debug:
+                        print(self.connection.result)
 
     def auto_delete(self, base_dn):
         self.connection.search(
@@ -170,6 +178,8 @@ class LDAP:
                 if dn in self.seen:
                     continue
                 if not self.dry_run:
-                    print(f"DELETE {dn}")
+                    if self.debug:
+                        print(f"DELETE {dn}")
                     self.connection.delete(dn)
-                    print(self.connection.result)
+                    if self.debug:
+                        print(self.connection.result)
