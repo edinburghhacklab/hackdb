@@ -145,9 +145,11 @@ class Member(models.Model):
             datasharing_group = Group.objects.get(name="sharealike")
             if self.privacy > 1:
                 if self.user.groups.contains(datasharing_group):
+                    print(f"fix {self.user}: removing from sharealike group")
                     self.user.groups.remove(datasharing_group)
             else:
                 if not self.user.groups.contains(datasharing_group):
+                    print(f"fix {self.user}: adding to sharealike group")
                     self.user.groups.add(datasharing_group)
         except Group.DoesNotExist:
             print(f"sharealike group does not exist, ignoring")
