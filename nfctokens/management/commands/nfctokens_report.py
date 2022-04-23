@@ -51,6 +51,8 @@ class Command(BaseCommand):
 
         try:
             sort_column = headers.index(options["sort"][0])
+        except TypeError:
+            sort_column = 0
         except ValueError:
             sort_column = 0
         output.sort(key=lambda row: row[sort_column], reverse=options["reverse"])
