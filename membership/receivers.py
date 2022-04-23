@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+from django.contrib.auth.models import Group
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
@@ -32,3 +33,14 @@ def member_post_save(sender, instance, **kwargs):
         update_fields.append("last_name")
     if update_fields:
         instance.user.save(update_fields=update_fields)
+
+    try:
+        datasharing_group = Group.objects.get(name="sharealike")
+        if instance.privacy > 1:
+            if instance.user.groups.contains(datasharing_group):
+                instance.user.groups.remove(datasharing_group)
+        else:
+            if not instance.user.groups.contains(datasharing_group):
+                instance.user.groups.add(datasharing_group)
+    except Group.DoesNotExist:
+        print(f"sharealike group does not exist, ignoring")
