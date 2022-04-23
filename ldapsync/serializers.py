@@ -72,6 +72,8 @@ class PosixGroupLDAPSerializer:
 
 def serialize_user(user, base_dn, domain_sid=None):
     dn = f"uid={user.username},{base_dn}"
+    if not user.is_active:
+        return dn, None
     entry = {
         "objectClass": ["top", "account", "extensibleObject"],
         "uid": [user.username],
@@ -116,7 +118,7 @@ def serialize_group(group, base_dn, users_base_dn):
         "cn": [group.name],
         "member": [],
     }
-    for user in group.user_set.order_by("username"):
+    for user in group.user_set.filter(is_active=True).order_by("username"):
         entry["member"].append(f"uid={user.username},{users_base_dn}")
     if len(entry["member"]) == 0:
         return dn, None
@@ -136,7 +138,7 @@ def serialize_posixgroup(group, base_dn):
         "gidNumber": [group.posix.gid],
         "memberUid": [],
     }
-    for user in group.user_set.order_by("username"):
+    for user in group.user_set.filter(is_active=True).order_by("username"):
         entry["memberUid"].append(user.username)
     if len(entry["memberUid"]) == 0:
         return dn, None
