@@ -237,11 +237,12 @@ def nfc_token_auth(request):
                     }
                 )
 
+    user_groups = get_groups(token.user)
     matched_groups = []
     if required_groups:
         print(required_groups)
         found = False
-        for group in get_groups(token.user):
+        for group in user_groups:
             if group in required_groups:
                 matched_groups.append(group)
                 found = True
@@ -259,8 +260,7 @@ def nfc_token_auth(request):
         "found": True,
         "authorized": True,
         "username": token.user.username,
+        "groups": user_groups,
     }
-    if len(matched_groups) > 0:
-        reply["groups"] = matched_groups
     token_sighting(token, location, True, type_="auth")
     return JsonResponse(reply)
