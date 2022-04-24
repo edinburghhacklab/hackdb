@@ -4,6 +4,7 @@
 
 import datetime
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -14,8 +15,11 @@ class Command(BaseCommand):
     help = ""
 
     def handle(self, *args, **options):
-        delete_before_date = timezone.make_aware(
-            datetime.datetime.now()
-        ) - datetime.timedelta(days=30)
-        NFCTokenLog.objects.filter(timestamp__lt=delete_before_date).delete()
-        NFCToken.objects.filter(user=None, last_seen__lt=delete_before_date).delete()
+        if settings.NFCTOKENS_LOG_RETENTION_DAYS:
+            delete_before_date = timezone.make_aware(
+                datetime.datetime.now()
+            ) - datetime.timedelta(days=settings.NFCTOKENS_LOG_RETENTION_DAYS)
+            NFCTokenLog.objects.filter(timestamp__lt=delete_before_date).delete()
+            NFCToken.objects.filter(
+                user=None, last_seen__lt=delete_before_date
+            ).delete()
