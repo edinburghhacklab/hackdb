@@ -65,6 +65,7 @@ def mytokens_add(request, uid=None):
         except NFCToken.DoesNotExist:
             token = NFCToken(user=request.user)
         token.enabled = True
+        token.last_edit = timezone.now()
         form = TokenAddForm(request.POST, instance=token)
         if form.is_valid():
             form.save()
@@ -90,6 +91,7 @@ def mytokens_edit(request, uid):
     if request.method == "POST":
         form = TokenEditForm(request.POST, instance=token)
         if form.is_valid():
+            token.last_edit = timezone.now()
             form.save()
             messages.add_message(request, messages.SUCCESS, "Token updated.")
             return HttpResponseRedirect(reverse("nfctokens_mytokens"))
@@ -132,6 +134,7 @@ def mytokens_enable(request, uid):
     if current_enabled_count < settings.NFCTOKENS_USER_ENABLED_LIMIT:
         token = request.user.nfctokens.get(uid=uid)
         token.enabled = True
+        token.last_edit = timezone.now()
         token.save()
         messages.add_message(
             request, messages.SUCCESS, "Token %s enabled." % (token.uid)
@@ -147,6 +150,7 @@ def mytokens_enable(request, uid):
 def mytokens_disable(request, uid):
     token = request.user.nfctokens.get(uid=uid)
     token.enabled = False
+    token.last_edit = timezone.now()
     token.save()
     messages.add_message(request, messages.SUCCESS, "Token %s disabled." % (token.uid))
     return HttpResponseRedirect(reverse("nfctokens_mytokens"))

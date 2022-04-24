@@ -47,6 +47,7 @@ class NFCToken(models.Model):
     )
     description = models.CharField(max_length=255, blank=True)
     enabled = models.BooleanField(default=True)
+    last_edit = models.DateTimeField(editable=False, default=timezone.now)
     last_seen = models.DateTimeField(null=True, blank=True, editable=False)
     last_location = models.CharField(
         null=True, blank=True, max_length=255, editable=False

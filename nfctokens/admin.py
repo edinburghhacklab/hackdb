@@ -42,6 +42,7 @@ class NFCTokenAdmin(admin.ModelAdmin):
         "name",
         "user",
         "enabled",
+        "last_edit",
         "last_seen",
         "last_location",
     )
