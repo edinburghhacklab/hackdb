@@ -4,6 +4,7 @@
 
 import json
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import (
@@ -52,6 +53,10 @@ def mytokens(request):
 @login_required
 @permission_required("nfctokens.self_configure_token", raise_exception=True)
 def mytokens_add(request, uid=None):
+    current_count = request.user.nfctokens.count()
+    if current_count >= settings.NFCTOKENS_USER_TOTAL_LIMIT:
+        messages.add_message(request, messages.ERROR, "Too many tokens.")
+        return HttpResponseRedirect(reverse("nfctokens_mytokens"))
     if request.method == "POST":
         try:
             token = NFCToken.unassigned_objects.get(uid=uid)
@@ -97,6 +102,10 @@ def mytokens_edit(request, uid):
 @login_required
 @permission_required("nfctokens.self_configure_token", raise_exception=True)
 def mytokens_claim(request):
+    current_count = request.user.nfctokens.count()
+    if current_count >= settings.NFCTOKENS_USER_TOTAL_LIMIT:
+        messages.add_message(request, messages.ERROR, "Too many tokens.")
+        return HttpResponseRedirect(reverse("nfctokens_mytokens"))
     context = {"tokens": NFCToken.recent_objects.all()}
     return render(request, "nfctokens/mytokens_claim.html", context)
 
@@ -119,10 +128,16 @@ def mytokens_delete(request, uid):
 @permission_required("nfctokens.self_configure_token", raise_exception=True)
 @require_POST
 def mytokens_enable(request, uid):
-    token = request.user.nfctokens.get(uid=uid)
-    token.enabled = True
-    token.save()
-    messages.add_message(request, messages.SUCCESS, "Token %s enabled." % (token.uid))
+    current_enabled_count = request.user.nfctokens.filter(enabled=True).count()
+    if current_enabled_count < settings.NFCTOKENS_USER_ENABLED_LIMIT:
+        token = request.user.nfctokens.get(uid=uid)
+        token.enabled = True
+        token.save()
+        messages.add_message(
+            request, messages.SUCCESS, "Token %s enabled." % (token.uid)
+        )
+    else:
+        messages.add_message(request, messages.ERROR, "Too many enabled tokens.")
     return HttpResponseRedirect(reverse("nfctokens_mytokens"))
 
 
