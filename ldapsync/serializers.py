@@ -75,6 +75,8 @@ def serialize_posixgroup(group, base_dn):
 
 def serialize_posixuser_group(user, base_dn):
     dn = f"cn={user.username},{base_dn}"
+    if not user.is_active:
+        return dn, None
     entry = {
         "objectClass": ["top", "posixGroup"],
         "cn": [user.username],
