@@ -11,6 +11,6 @@ class Command(BaseCommand):
     help = "Update the membership status and members group"
 
     def handle(self, *args, **options):
-        for member in Member:
+        for member in Member.objects.all():
             if member.fixup():
                 member.save()
