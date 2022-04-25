@@ -7,7 +7,12 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 
-from ldapsync.serializers import serialize_group, serialize_posixgroup, serialize_user
+from ldapsync.serializers import (
+    serialize_group,
+    serialize_posixgroup,
+    serialize_posixuser_group,
+    serialize_user,
+)
 from ldapsync.utils import LDAP
 
 
@@ -45,6 +50,11 @@ class Command(BaseCommand):
             for group in Group.objects.filter(posix__isnull=False):
                 dn, entry = serialize_posixgroup(
                     group, settings.LDAPSYNC_POSIX_GROUPS_BASE_DN
+                )
+                server.sync_entry(dn, entry)
+            for user in get_user_model().objects.all():
+                dn, entry = serialize_posixuser_group(
+                    user, settings.LDAPSYNC_POSIX_GROUPS_BASE_DN
                 )
                 server.sync_entry(dn, entry)
 

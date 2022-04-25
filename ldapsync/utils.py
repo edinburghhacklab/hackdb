@@ -63,29 +63,33 @@ def modlist(old, new, ignore_attr_types=[], debug=False):
 def sync_user(user, dry_run=False):
     if not settings.LDAPSYNC_USERS_BASE_DN:
         return
-    user_serializer = serializers.UserLDAPSerializer(
-        settings.LDAPSYNC_USERS_BASE_DN, domain_sid=settings.LDAPSYNC_DOMAIN_SID
+    dn, entry = serializers.serialize_user(
+        user, settings.LDAPSYNC_USERS_BASE_DN, domain_sid=settings.LDAPSYNC_DOMAIN_SID
     )
-    dn, entry = user_serializer.serialize(user)
     server = LDAP(dry_run=dry_run)
     server.sync_entry(dn, entry)
+    if settings.LDAPSYNC_POSIX_GROUPS_BASE_DN:
+        dn, entry = serializers.serialize_posixuser_group(
+            user, settings.LDAPSYNC_POSIX_GROUPS_BASE_DN
+        )
+        server.sync_entry(dn, entry)
 
 
 def sync_group(group, dry_run=False):
     if not settings.LDAPSYNC_GROUPS_BASE_DN:
         return
-    group_serializer = serializers.GroupLDAPSerializer(
-        settings.LDAPSYNC_GROUPS_BASE_DN, users_base_dn=settings.LDAPSYNC_USERS_BASE_DN
+    dn, entry = serializers.serialize_group(
+        group,
+        settings.LDAPSYNC_GROUPS_BASE_DN,
+        users_base_dn=settings.LDAPSYNC_USERS_BASE_DN,
     )
-    posix_group_serializer = serializers.PosixGroupLDAPSerializer(
-        settings.LDAPSYNC_POSIX_GROUPS_BASE_DN
-    )
-    dn, entry = group_serializer.serialize(group)
-    if group.posix:
-        posix_dn, posix_entry = posix_group_serializer.serialize(group)
+    if settings.LDAPSYNC_POSIX_GROUPS_BASE_DN and group.posix:
+        posix_dn, posix_entry = serializers.posix_group_serializer(
+            group, settings.LDAPSYNC_POSIX_GROUPS_BASE_DN
+        )
     server = LDAP(dry_run=dry_run)
     server.sync_entry(dn, entry)
-    if group.posix:
+    if settings.LDAPSYNC_POSIX_GROUPS_BASE_DN and group.posix:
         server.sync_entry(posix_dn, posix_entry)
 
 
