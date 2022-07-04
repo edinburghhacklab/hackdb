@@ -8,33 +8,33 @@
 -i https://pypi.org/simple
 asgiref==3.5.2; python_version >= '3.7'
 beautifulsoup4==4.11.1; python_version >= '3.6'
-certifi==2022.5.18.1; python_version >= '3.6'
-cffi==1.15.0
-charset-normalizer==2.0.12; python_version >= '3'
+certifi==2022.6.15; python_version >= '3.6'
+cffi==1.15.1
+charset-normalizer==2.1.0; python_version >= '3.6'
 cryptography==37.0.2
 defusedxml==0.7.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
-django-allauth==0.50.0
+django-allauth==0.51.0
 django-bootstrap5==21.3
 django-countries==7.3.2
 django-extensions==3.1.5
-django-phonenumber-field[phonenumbers]==6.1.0
-django==4.0.4
+django-phonenumber-field[phonenumbers]==6.3.0
+django==4.0.6
 gunicorn==20.1.0
-idna==3.3; python_version >= '3'
+idna==3.3; python_version >= '3.5'
 ldap3==2.9.1
 ldif==4.1.2
 oauthlib==3.2.0; python_version >= '3.6'
 passlib==1.7.4
-phonenumbers==8.12.48
+phonenumbers==8.12.51
 pyasn1==0.4.8
 pycparser==2.21
 pyjwt[crypto]==2.4.0; python_version >= '3.6'
 python3-openid==3.2.0
 requests-oauthlib==1.3.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
-requests==2.27.1
-setuptools==62.3.2; python_version >= '3.7'
+requests==2.28.1
+setuptools==63.1.0; python_version >= '3.7'
 soupsieve==2.3.2.post1; python_version >= '3.6'
 sqlparse==0.4.2; python_version >= '3.5'
-tabulate==0.8.9
-typing-extensions==4.2.0; python_version >= '3.7'
-urllib3==1.26.9; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'
+tabulate==0.8.10
+typing-extensions==4.3.0; python_version >= '3.7'
+urllib3==1.26.9; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'
