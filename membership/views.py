@@ -117,8 +117,8 @@ def overview(request):
 
 def member_count(request):
     count = 0
-    for user in get_user_model().objects.all():
-        if user.member.is_member():
+    for member in Member.objects.all():
+        if member.is_member():
             count = count + 1
     return JsonResponse({"members": count})
 
