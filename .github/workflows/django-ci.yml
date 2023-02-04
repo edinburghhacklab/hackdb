@@ -1,6 +1,8 @@
 name: Django CI
 
 on:
+  schedule:
+    - cron: '16 18 * * 2'
   push:
     branches: [ main ]
   pull_request:
