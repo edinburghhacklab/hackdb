@@ -61,6 +61,9 @@ class NFCToken(models.Model):
         verbose_name = "NFC Token"
         permissions = [
             ("auth_token", "Can authenticate a token"),
+            ("auth_token_name", "Can see name during authentication"),
+            ("auth_token_email", "Can see email during authentication"),
+            ("auth_token_groups", "Can see groups during authentication"),
             ("export_tokens", "Can export all tokens"),
             ("self_configure_token", "Can configure own NFC Token"),
         ]

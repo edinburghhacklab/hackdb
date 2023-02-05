@@ -279,7 +279,12 @@ def nfc_token_auth(request):
         "found": True,
         "authorized": True,
         "username": token.user.username,
-        "groups": user_groups,
     }
+    if request.user.has_perm("nfctokens.auth_token_name"):
+        reply["name"] = token.user.get_full_name()
+    if request.user.has_perm("nfctokens.auth_token_email"):
+        reply["email"] = token.user.email
+    if request.user.has_perm("nfctokens.auth_token_groups"):
+        reply["groups"] = user_groups
     token_sighting(token, location, True, type_="auth")
     return JsonResponse(reply)
