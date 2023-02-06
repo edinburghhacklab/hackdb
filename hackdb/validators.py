@@ -14,4 +14,5 @@ class HacklabUsernameValidator(validators.RegexValidator):
     )
     flags = re.ASCII
 
+
 custom_username_validators = [HacklabUsernameValidator()]

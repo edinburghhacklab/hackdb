@@ -162,7 +162,7 @@ ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "account_email"
 
 ACCOUNT_USERNAME_BLACKLIST = ["admin", "administrator", "root", "user", "username"]
 ACCOUNT_USERNAME_MIN_LENGTH = 2
-ACCOUNT_USERNAME_VALIDATORS = 'hackdb.validators.custom_username_validators'
+ACCOUNT_USERNAME_VALIDATORS = "hackdb.validators.custom_username_validators"
 
 SOCIALACCOUNT_PROVIDERS = {}
 
