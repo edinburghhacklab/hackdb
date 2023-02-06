@@ -46,7 +46,10 @@ def groupadmin_view(request, group_name):
 
     users = {}
     for user in group.user_set.all():
-        del new_users[user.username]
+        try:
+            del new_users[user.username]
+        except KeyError:
+            pass
         users[user.username] = {
             "id": user.id,
             "username": user.username,
