@@ -43,13 +43,4 @@ class APIKeyMiddleware:
             except APIKey.DoesNotExist:
                 pass
 
-        if "X-API-Key" in request.META:
-            try:
-                apikey = APIKey.objects.get(request.headers["X-API-Key"])
-                request.user = APIUser(apikey)
-                request._dont_enforce_csrf_checks = True
-                return self.get_response(request)
-            except APIKey.DoesNotExist:
-                pass
-
         return self.get_response(request)
