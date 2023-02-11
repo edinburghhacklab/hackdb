@@ -141,7 +141,7 @@ def audit_list(mailing_list):
                 and not user_is_subscribed
                 and len(verified_addresses) > 0
             ):
-                subscribers[verified_addresses[0].email]["action"] = "subscribe"
+                subscribers[verified_addresses[0].email.lower()]["action"] = "subscribe"
 
     for address in mailman_subscribers:
         address = address.lower()
