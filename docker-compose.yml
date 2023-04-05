@@ -7,6 +7,7 @@ services:
     ports:
     - 8000:8000
     volumes:
+    - .:/usr/src/app
     - database:/data/database
     - static:/data/static
     #- ./mydockersettings.py:/data/config/settings.py:ro
