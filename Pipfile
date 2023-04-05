@@ -16,6 +16,7 @@ ldap3 = "*"
 requests = "*"
 gunicorn = "*"
 tabulate = "*"
+django-rest-framework = "*"
 
 [dev-packages]
 

@@ -31,4 +31,5 @@ urlpatterns = [
     path("api/1/xero_contacts", membership.views.xero_contacts_json),
     path("api/1/xero_update_uuid", membership.views.xero_update_uuid),
     path("discorduser/api/users", discorduser.views.api_get_users),
+    path("api/v2/", include("api.urls")),
 ]
