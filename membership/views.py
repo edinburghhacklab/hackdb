@@ -116,11 +116,21 @@ def overview(request):
 
 
 def member_count(request):
-    count = 0
+    data = {
+        "members": 0,
+        "type": {},
+    }
+
     for member in Member.objects.all():
         if member.is_member():
-            count = count + 1
-    return JsonResponse({"members": count})
+            data["members"] += 1
+            for term in member.user.membershipterm_set.all():
+                if term.is_active:
+                    mtype_text = term.get_mtype_display().lower()
+                    data["type"][mtype_text] = data["type"].get(mtype_text, 0) + 1
+                    break
+
+    return JsonResponse(data)
 
 
 @require_GET
