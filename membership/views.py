@@ -118,7 +118,9 @@ def overview(request):
 def member_count(request):
     data = {
         "members": 0,
-        "type": {},
+        "type": {
+            x[1].lower(): 0 for x in MembershipTerm._meta.get_field("mtype").choices
+        },
     }
 
     for member in Member.objects.all():
