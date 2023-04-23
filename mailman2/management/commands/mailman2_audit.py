@@ -16,9 +16,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--list", nargs=1)
         parser.add_argument(
-            "--fix",
-            action="store_true",
-            help="Push required changes to Mailman API",
+            "--fix", action="store_true", help="Push required changes to Mailman API"
         )
         parser.add_argument(
             "--quiet",
@@ -46,23 +44,35 @@ class Command(BaseCommand):
 
                 if subscriber.get("action") == "subscribe":
                     if options["verbosity"] >= 1:
-                        print(f"{mailing_list.name}: subscribe {subscriber['address']}")
+                        print(
+                            f"{mailing_list.name}: subscribe {subscriber['address']}",
+                            end="",
+                        )
                     if options["fix"]:
                         if settings.MAILMAN_ENABLE_AUTO_SUBSCRIBE:
-                            mailmanapi.subscribe(
-                                mailing_list.name, subscriber["address"]
+                            ret, code = mailmanapi.subscribe(
+                                mailing_list.name, subscriber["address"], debug=True
                             )
+                            if options["verbosity"] >= 1:
+                                print(f" {code}", end="")
                         else:
                             print(f"MAILMAN_ENABLE_AUTO_SUBSCRIBE is disabled")
+                    if options["verbosity"] >= 1:
+                        print()
                 elif subscriber.get("action") == "unsubscribe":
                     if options["verbosity"] >= 1:
                         print(
-                            f"{mailing_list.name}: unsubscribe {subscriber['address']}"
+                            f"{mailing_list.name}: unsubscribe {subscriber['address']}",
+                            end="",
                         )
                     if options["fix"]:
                         if settings.MAILMAN_ENABLE_AUTO_UNSUBSCRIBE:
-                            mailmanapi.unsubscribe(
-                                mailing_list.name, subscriber["address"]
+                            ret, code = mailmanapi.unsubscribe(
+                                mailing_list.name, subscriber["address"], debug=True
                             )
+                            if options["verbosity"] >= 1:
+                                print(f" {code}", end="")
                         else:
                             print(f"MAILMAN_ENABLE_AUTO_UNSUBSCRIBE is disabled")
+                    if options["verbosity"] >= 1:
+                        print()

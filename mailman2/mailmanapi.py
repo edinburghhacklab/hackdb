@@ -64,26 +64,28 @@ def get_member(email):
         return None
 
 
-def subscribe(list_name, email):
+def subscribe(list_name, email, *, debug=False):
     response = requests.post(
         f"{settings.MAILMAN_API_URL}/lists/{list_name}/members/{email}",
         auth=(settings.MAILMAN_API_USERNAME, settings.MAILMAN_API_PASSWORD),
     )
     if response and response.status_code == 200:
-        return True
+        outcome = (True, response.status_code)
     else:
-        return False
+        outcome = (False, response.status_code)
+    return outcome if debug else outcome[0]
 
 
-def unsubscribe(list_name, email):
+def unsubscribe(list_name, email, *, debug=False):
     response = requests.delete(
         f"{settings.MAILMAN_API_URL}/lists/{list_name}/members/{email}",
         auth=(settings.MAILMAN_API_USERNAME, settings.MAILMAN_API_PASSWORD),
     )
     if response and response.status_code == 200:
-        return True
+        outcome = (True, response.status_code)
     else:
-        return False
+        outcome = (False, response.status_code)
+    return outcome if debug else outcome[0]
 
 
 def change_address(list_name, old_address, new_address):
