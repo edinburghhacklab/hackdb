@@ -132,11 +132,12 @@ def subscribe(request, name, email=None):
             raise RuntimeError
     if mailing_list.user_can_subscribe(request.user):
         if settings.MAILMAN_ENABLE_INTERACTIVE_CHANGES:
-            if mailmanapi.subscribe(name, verified_address.email):
+            try:
+                mailmanapi.subscribe(name, verified_address.email)
                 messages.add_message(
                     request, messages.SUCCESS, f"Subscribed to {name}."
                 )
-            else:
+            except:
                 messages.add_message(
                     request,
                     messages.ERROR,
@@ -165,11 +166,12 @@ def unsubscribe(request, name, email):
         user=request.user, verified=True, email=email
     )
     if settings.MAILMAN_ENABLE_INTERACTIVE_CHANGES:
-        if mailmanapi.unsubscribe(name, verified_address.email):
+        try:
+            mailmanapi.unsubscribe(name, verified_address.email)
             messages.add_message(
                 request, messages.SUCCESS, f"Unsubscribed from {name}."
             )
-        else:
+        except:
             messages.add_message(
                 request,
                 messages.ERROR,
@@ -195,13 +197,14 @@ def change_address(request, name, old_email, new_email):
         user=request.user, verified=True, email=new_email
     )
     if settings.MAILMAN_ENABLE_INTERACTIVE_CHANGES:
-        if mailmanapi.change_address(
-            name, old_verified_address.email, new_verified_address.email
-        ):
+        try:
+            mailmanapi.change_address(
+                name, old_verified_address.email, new_verified_address.email
+            )
             messages.add_message(
                 request, messages.SUCCESS, f"Changed address for {name}."
             )
-        else:
+        except:
             messages.add_message(
                 request,
                 messages.ERROR,
@@ -251,9 +254,9 @@ def simple_mode(request):
         for address in verified_addresses:
             if address == primary_address:
                 continue
-            if not mailmanapi.global_change_address(
-                address.email, primary_address.email
-            ):
+            try:
+                mailmanapi.global_change_address(address.email, primary_address.email)
+            except:
                 errors = True
     else:
         messages.add_message(

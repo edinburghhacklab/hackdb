@@ -164,8 +164,8 @@ def global_change_address(user, old_address, new_address):
     if old_address:
         if settings.MAILMAN_ENABLE_ADDRESS_CHANGES:
             try:
-                if mailmanapi.global_change_address(old_address, new_address):
-                    return True
+                mailmanapi.global_change_address(old_address, new_address)
+                return True
             except Exception as e:
                 print("Exception while talking to Mailman API:", e)
             print("live change of address failed, queue for retry")
