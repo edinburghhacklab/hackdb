@@ -45,24 +45,46 @@ class Command(BaseCommand):
                     print(subscriber)
 
                 if subscriber.get("action") == "subscribe":
-                    if options["verbosity"] >= 1:
-                        print(f"{mailing_list.name}: subscribe {subscriber['address']}")
                     if options["fix"]:
                         if settings.MAILMAN_ENABLE_AUTO_SUBSCRIBE:
-                            mailmanapi.subscribe(
-                                mailing_list.name, subscriber["address"]
-                            )
+                            try:
+                                mailmanapi.subscribe(
+                                    mailing_list.name, subscriber["address"]
+                                )
+                                if options["verbosity"] >= 1:
+                                    print(
+                                        f"{mailing_list.name}: subscribe {subscriber['address']} [ok]"
+                                    )
+                            except Exception as e:
+                                print(
+                                    f"{mailing_list.name}: subscribe {subscriber['address']} [{type(e).__name__}: {e}]"
+                                )
                         else:
                             print(f"MAILMAN_ENABLE_AUTO_SUBSCRIBE is disabled")
+                    else:
+                        if options["verbosity"] >= 1:
+                            print(
+                                f"{mailing_list.name}: subscribe {subscriber['address']}"
+                            )
                 elif subscriber.get("action") == "unsubscribe":
-                    if options["verbosity"] >= 1:
-                        print(
-                            f"{mailing_list.name}: unsubscribe {subscriber['address']}"
-                        )
                     if options["fix"]:
                         if settings.MAILMAN_ENABLE_AUTO_UNSUBSCRIBE:
-                            mailmanapi.unsubscribe(
-                                mailing_list.name, subscriber["address"]
-                            )
+                            try:
+                                mailmanapi.unsubscribe(
+                                    mailing_list.name, subscriber["address"]
+                                )
+                                if options["verbosity"] >= 1:
+                                    print(
+                                        f"{mailing_list.name}: unsubscribe {subscriber['address']} [ok]"
+                                    )
+                            except Exception as e:
+                                print(
+                                    f"{mailing_list.name}: unsubscribe {subscriber['address']} [{type(e).__name__}: {e}]"
+                                )
                         else:
                             print(f"MAILMAN_ENABLE_AUTO_UNSUBSCRIBE is disabled")
+                    else:
+                        if options["verbosity"] >= 1:
+                            print(
+                                f"{mailing_list.name}: unsubscribe {subscriber['address']}"
+                            )

@@ -7,17 +7,21 @@ from django.conf import settings
 
 
 def get_list(list_name):
-    return requests.get(
+    response = requests.get(
         f"{settings.MAILMAN_API_URL}/lists/{list_name}",
         auth=(settings.MAILMAN_API_USERNAME, settings.MAILMAN_API_PASSWORD),
-    ).json()
+    )
+    response.raise_for_status()
+    return response.json()
 
 
 def get_lists():
-    return requests.get(
+    response = requests.get(
         f"{settings.MAILMAN_API_URL}/lists",
         auth=(settings.MAILMAN_API_USERNAME, settings.MAILMAN_API_PASSWORD),
-    ).json()
+    )
+    response.raise_for_status()
+    return response.json()
 
 
 def get_list_member_data(list_name, email):
@@ -25,10 +29,10 @@ def get_list_member_data(list_name, email):
         f"{settings.MAILMAN_API_URL}/lists/{list_name}/members/{email}",
         auth=(settings.MAILMAN_API_USERNAME, settings.MAILMAN_API_PASSWORD),
     )
-    if response:
-        return response.json()
-    else:
+    if response.status_code == 404:
         return None
+    response.raise_for_status()
+    return response.json()
 
 
 def is_subscribed(list_name, email):
@@ -69,10 +73,8 @@ def subscribe(list_name, email):
         f"{settings.MAILMAN_API_URL}/lists/{list_name}/members/{email}",
         auth=(settings.MAILMAN_API_USERNAME, settings.MAILMAN_API_PASSWORD),
     )
-    if response and response.status_code == 200:
-        return True
-    else:
-        return False
+    response.raise_for_status()
+    return True
 
 
 def unsubscribe(list_name, email):
@@ -80,10 +82,8 @@ def unsubscribe(list_name, email):
         f"{settings.MAILMAN_API_URL}/lists/{list_name}/members/{email}",
         auth=(settings.MAILMAN_API_USERNAME, settings.MAILMAN_API_PASSWORD),
     )
-    if response and response.status_code == 200:
-        return True
-    else:
-        return False
+    response.raise_for_status()
+    return True
 
 
 def change_address(list_name, old_address, new_address):
@@ -92,10 +92,8 @@ def change_address(list_name, old_address, new_address):
         auth=(settings.MAILMAN_API_USERNAME, settings.MAILMAN_API_PASSWORD),
         json={"address": new_address},
     )
-    if response and response.status_code == 200:
-        return True
-    else:
-        return False
+    response.raise_for_status()
+    return True
 
 
 def global_change_address(old_address, new_address):
@@ -104,7 +102,5 @@ def global_change_address(old_address, new_address):
         auth=(settings.MAILMAN_API_USERNAME, settings.MAILMAN_API_PASSWORD),
         json={"new_address": new_address},
     )
-    if response and response.status_code == 200:
-        return True
-    else:
-        return False
+    response.raise_for_status()
+    return True
