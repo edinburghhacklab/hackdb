@@ -216,11 +216,11 @@
         },
         "django": {
             "hashes": [
-                "sha256:ad33ed68db9398f5dfb33282704925bce044bef4261cd4fb59e4e7f9ae505a78",
-                "sha256:c36e2ab12824e2ac36afa8b2515a70c53c7742f0d6eaefa7311ec379558db997"
+                "sha256:066b6debb5ac335458d2a713ed995570536c8b59a580005acb0732378d5eb1ee",
+                "sha256:7efa6b1f781a6119a10ac94b4794ded90db8accbe7802281cd26f8664ffed59c"
             ],
             "index": "pypi",
-            "version": "==4.2"
+            "version": "==4.2.1"
         },
         "django-allauth": {
             "hashes": [
@@ -258,11 +258,11 @@
                 "phonenumbers"
             ],
             "hashes": [
-                "sha256:9edad2b2602af25f2aefc73c4cf53eaf7abf9e17d73c1c4372bd3052bebb26f9",
-                "sha256:de3e47b986b4959949762c16fd8fe26b3e462ef3e5531ed00950bd20c698576a"
+                "sha256:4eaab35fe9a163046dc3a47188771385c56a788e0e11b7bbcc662e1e6b7b9104",
+                "sha256:63721dbdc7424cd594a08d80f550e790cf6e7c903cbc0fb4dd9d86baac8b8c51"
             ],
             "index": "pypi",
-            "version": "==7.0.2"
+            "version": "==7.1.0"
         },
         "gunicorn": {
             "hashes": [
@@ -317,18 +317,18 @@
         },
         "phonenumbers": {
             "hashes": [
-                "sha256:421b69fd6d6650372000a6c47ab5b5c5d7b438b33f7b317739e728eff1ec1886",
-                "sha256:fe071b8324473e72a54b52e602d059c15b999ec9900fff9e42c01b422aeca662"
+                "sha256:107469114fd297258a485bdf8238d0522cb392db1257faf2bf23384ecbdb0e8a",
+                "sha256:3e3274d88cab3609b55ff5b93417075dbca2d13064f103fbf562e0ea1dda0f9a"
             ],
-            "version": "==8.13.10"
+            "version": "==8.13.11"
         },
         "pip": {
             "hashes": [
-                "sha256:3d8d72fa0714e93c9d3c2a0ede91e898c64596e0fa7d4523f72dd95728efc418",
-                "sha256:c95b53d309f903f33dfe5fd37e502a5c3a05ee3454d518e45df522a4f091b728"
+                "sha256:0e7c86f486935893c708287b30bd050a36ac827ec7fe5e43fe7cb198dd835fba",
+                "sha256:3ef6ac33239e4027d9a5598a381b9d30880a1477e50039db2eac6e8a8f6d1b18"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==23.1.1"
+            "version": "==23.1.2"
         },
         "pyasn1": {
             "hashes": [
@@ -365,11 +365,11 @@
         },
         "requests": {
             "hashes": [
-                "sha256:64299f4909223da747622c030b781c0d7811e359c37124b4bd368fb8c6518baa",
-                "sha256:98b1b2782e3c6c4904938b84c0eb932721069dfdb9134313beff7c83c2df24bf"
+                "sha256:e8f3c9be120d3333921d213eef078af392fba3933ab7ed2d1cba3b56f2568c3b",
+                "sha256:f2e34a75f4749019bb0e3effb66683630e4ffeaf75819fb51bebef1bf5aef059"
             ],
             "index": "pypi",
-            "version": "==2.28.2"
+            "version": "==2.29.0"
         },
         "requests-oauthlib": {
             "hashes": [
