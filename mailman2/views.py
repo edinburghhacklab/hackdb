@@ -64,6 +64,7 @@ def build_overview_context(user):
             "subscribed": False,
             "recommended": False,
             "can_subscribe": False,
+            "can_unsubscribe": False,
             "subscriptions": [],
         }
         row = 0
@@ -80,6 +81,9 @@ def build_overview_context(user):
             if mailing_list.name in subscriber_data[address.email]:
                 list_data["visible"] = True
                 list_data["subscribed"] = True
+                list_data["can_unsubscribe"] = True
+                if group_policy and group_policy.policy == GroupPolicy.FORCE:
+                    list_data["can_unsubscribe"] = False
                 subscription = subscriber_data[address.email][mailing_list.name]
                 subscription["row"] = row
                 # subscription["obj"] = address
@@ -162,26 +166,34 @@ def subscribe(request, name, email=None):
 @verified_email_required
 @require_POST
 def unsubscribe(request, name, email):
+    mailing_list = MailingList.objects.get(name=name)
     verified_address = EmailAddress.objects.get(
         user=request.user, verified=True, email=email
     )
-    if settings.MAILMAN_ENABLE_INTERACTIVE_CHANGES:
-        try:
-            mailmanapi.unsubscribe(name, verified_address.email)
-            messages.add_message(
-                request, messages.SUCCESS, f"Unsubscribed from {name}."
-            )
-        except:
+    if mailing_list.user_can_unsubscribe(request.user):
+        if settings.MAILMAN_ENABLE_INTERACTIVE_CHANGES:
+            try:
+                mailmanapi.unsubscribe(name, verified_address.email)
+                messages.add_message(
+                    request, messages.SUCCESS, f"Unsubscribed from {name}."
+                )
+            except:
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    f"Error unsubscribing from {name}, please try again later.",
+                )
+        else:
             messages.add_message(
                 request,
                 messages.ERROR,
-                f"Error unsubscribing from {name}, please try again later.",
+                "Subscription changes are disabled at the moment.",
             )
     else:
         messages.add_message(
             request,
             messages.ERROR,
-            "Subscription changes are disabled at the moment.",
+            f"Sorry, you are not authorised to unsubscribe from {name}.",
         )
     return HttpResponseRedirect(reverse("mailman2_overview"))
 

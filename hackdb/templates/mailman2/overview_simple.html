@@ -29,10 +29,12 @@
                   <td></td>
                 {% endif %}
                 <td>
+                  {% if l.can_unsubscribe %}
                   <form method="POST" action="{% url 'mailman2_unsubscribe' l.name subscription.email %}" style="display: inline">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-text py-1"><i class="bi-toggle-on"></i></button>
                   </form>
+                  {% endif %}
                   {% if subscription.delivery_status == 2 %}{# BYUSER #}
                   <span data-toggle="tooltip" title="You are subscribed but have disabled mail delivery.">(no mail)</span>
                   {% elif subscription.delivery_status == 3 %}{# BYADMIN #}

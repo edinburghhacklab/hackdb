@@ -52,12 +52,14 @@
                           <button type="submit" class="btn btn-link dropdown-item">edit options</button>
                         </form>
                       </li>
+                      {% if l.can_unsubscribe %}
                       <li>
                         <form method="POST" action="{% url 'mailman2_unsubscribe' l.name subscription.email %}" style="display: inline">
                           {% csrf_token %}
                           <button type="submit" class="btn btn-link dropdown-item">unsubscribe</button>
                         </form>
                       </li>
+                      {% endif %}
                     </ul>
                   </div>
                   {% if subscription.delivery_status == 2 %}{# BYUSER #}
