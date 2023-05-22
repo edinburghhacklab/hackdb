@@ -72,12 +72,21 @@ class MailingList(models.Model):
         #     return True
         return False
 
+    def user_can_unsubscribe(self, user):
+        for group in user.groups.all():
+            if self.group_policies.filter(
+                group=group, policy__gte=GroupPolicy.FORCE
+            ).exists():
+                return False
+        return True
+
     def user_recommend(self, user):
         for group in user.groups.all():
             if self.group_policies.filter(
                 group=group, policy__gte=GroupPolicy.RECOMMEND
             ).exists():
                 return True
+        return False
 
     def user_prompt(self, user):
         for group in user.groups.all():
