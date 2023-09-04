@@ -220,18 +220,18 @@
         },
         "django": {
             "hashes": [
-                "sha256:7e4225ec065e0f354ccf7349a22d209de09cc1c074832be9eb84c51c1799c432",
-                "sha256:860ae6a138a238fc4f22c99b52f3ead982bb4b1aad8c0122bcd8c8a3a02e409d"
+                "sha256:5e5c1c9548ffb7796b4a8a4782e9a2e5a3df3615259fc1bfd3ebc73b646146c1",
+                "sha256:b6b2b5cae821077f137dc4dade696a1c2aa292f892eca28fa8d7bfdf2608ddd4"
             ],
             "index": "pypi",
-            "version": "==4.2.4"
+            "version": "==4.2.5"
         },
         "django-allauth": {
             "hashes": [
-                "sha256:120e265f802b65738899c6cb627b827fde46a4d03067034c633f516c2adf3e3e"
+                "sha256:7b713c9947f1917e5c1c5a106fd6208d2c2c71435542fec6d60b01fd7bada3a8"
             ],
             "index": "pypi",
-            "version": "==0.54.0"
+            "version": "==0.55.2"
         },
         "django-bootstrap5": {
             "hashes": [
@@ -297,11 +297,11 @@
         },
         "ldif": {
             "hashes": [
-                "sha256:6cc161d91fe188c39f038890690d5c2d01715b3c0db4081bf77470f58244e8cc",
-                "sha256:707974fca94b2675fdda6368214d347305d3bca22fa64ffe28483216955029a9"
+                "sha256:281d2a0fd8519f2b3a5b09683249e53c110b923e56631f776addd78711c79954",
+                "sha256:f626575cf01af0e7c24b3538410e27cea1f421fd0794e8ac8dc5266d8e3c6230"
             ],
             "index": "pypi",
-            "version": "==4.2.0"
+            "version": "==4.2.2"
         },
         "oauthlib": {
             "hashes": [
@@ -329,10 +329,10 @@
         },
         "phonenumbers": {
             "hashes": [
-                "sha256:3d802739a22592e4127139349937753dee9b6a20bdd5d56847cd885bdc766b1f",
-                "sha256:b360c756252805d44b447b5bca6d250cf6bd6c69b6f0f4258f3bfe5ab81bef69"
+                "sha256:38180247697240ccedd74dec4bfbdbc22bb108b9c5f991f270ca3e41395e6f96",
+                "sha256:ba542f20f6dc83be8f127f240f9b5b7e7c1dec42aceff1879400d4dc0c781d81"
             ],
-            "version": "==8.13.18"
+            "version": "==8.13.19"
         },
         "pip": {
             "hashes": [
