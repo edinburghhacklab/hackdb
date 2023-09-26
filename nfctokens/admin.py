@@ -1,10 +1,12 @@
-# SPDX-FileCopyrightText: 2022 Tim Hawes <me@timhawes.com>
+# SPDX-FileCopyrightText: 2022-2023 Tim Hawes <me@timhawes.com>
 #
 # SPDX-License-Identifier: MIT
 
 import datetime
 
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 from .models import NFCToken, NFCTokenLog
 
@@ -69,9 +71,9 @@ class NFCTokenLogAdmin(admin.ModelAdmin):
     list_display = (
         "timestamp",
         "ltype",
-        "uid",
+        "token_link",
         "location",
-        "name",
+        "user_link",
         "token_description",
         "authorized",
     )
@@ -89,6 +91,32 @@ class NFCTokenLogAdmin(admin.ModelAdmin):
         "user__first_name",
         "user__last_name",
     )
+
+    def token_link(self, obj):
+        if obj.token:
+            return mark_safe(
+                '<a href="{}">{}</a>'.format(
+                    reverse("admin:nfctokens_nfctoken_change", args=(obj.token.pk,)),
+                    obj.uid,
+                )
+            )
+        else:
+            return obj.uid
+
+    token_link.short_description = "uid"
+
+    def user_link(self, obj):
+        if obj.user:
+            return mark_safe(
+                '<a href="{}">{}</a>'.format(
+                    reverse("admin:auth_user_change", args=(obj.user.pk,)),
+                    obj.name or obj.username,
+                )
+            )
+        else:
+            return obj.name or obj.username
+
+    user_link.short_description = "user"
 
 
 class NFCTokenInline(admin.TabularInline):
