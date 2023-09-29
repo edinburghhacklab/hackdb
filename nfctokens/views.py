@@ -224,6 +224,11 @@ def nfc_token_auth(request):
     required_groups = data.get("groups")
     exclude_groups = data.get("exclude_groups", [])
 
+    if len(uid) == 8 and uid.startswith("08"):
+        return JsonResponse(
+            {"found": False, "authorized": False, "reason": "Random UID not allowed"}
+        )
+
     # lookup the token
     try:
         token = NFCToken.objects.get(uid=uid)
