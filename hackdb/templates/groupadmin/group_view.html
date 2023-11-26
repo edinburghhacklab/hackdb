@@ -14,11 +14,11 @@
       </tr>
       </thead>
       <tbody>
-      {% for user in users %}
+      {% for user in members %}
       <tr>
         <td>{{ user.username }}</td>
         <td>
-          <form method="POST" action="{% url 'groupadmin_remove_user' group.name user.id %}">
+          <form method="POST" action="{% url 'groupadmin_remove_member' group.name user.id %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-xs btn-link">
               <i class="bi-trash" style="color:black"></i>
@@ -32,18 +32,67 @@
   </div>
   <div class="container">
     <p>
-      <form method="POST" action="{% url 'groupadmin_add_user' group.name %}">
+      <form method="POST" action="{% url 'groupadmin_add_member' group.name %}">
         {% csrf_token %}
         <select name="user_id">
           <option value=""></option>
-          {% for user_id, user_name in new_users %}
+          {% for user_id, user_name in new_members %}
           <option value="{{ user_id }}">{{ user_name }}</option>
           {% endfor %}
         </select>
-        <button type="submit" class="btn btn-default">Add</button>
+        <button type="submit" class="btn btn-default">
+          {% if group.properties.owners_manage_owners %}
+          Add Member
+          {% else %}
+          Add
+          {% endif %}
+        </button>
       </form>
     </p>
   </div>
+  {% if group.properties.owners_manage_owners %}
+  <div class="container">
+    <table class="table table-striped align-middle">
+      <thead>
+      <tr>
+        <th>Owner</th>
+        <th>Delete</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for user in owners %}
+      <tr>
+        <td>{{ user.username }}</td>
+        <td>
+          {% if user.username != request.user.username %}
+          <form method="POST" action="{% url 'groupadmin_remove_owner' group.name user.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-xs btn-link">
+              <i class="bi-trash" style="color:black"></i>
+            </button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="container">
+    <p>
+      <form method="POST" action="{% url 'groupadmin_add_owner' group.name %}">
+        {% csrf_token %}
+        <select name="user_id">
+          <option value=""></option>
+          {% for user_id, user_name in new_owners %}
+          <option value="{{ user_id }}">{{ user_name }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-default">Add Owner</button>
+      </form>
+    </p>
+  </div>
+  {% endif %}
   <div class="container">
     <a href="{% url 'home' %}" class="btn btn-outline-secondary">Home</a>
     <a href="{% url 'groupadmin_list' %}" class="btn btn-outline-secondary">Groups</a>

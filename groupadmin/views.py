@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Tim Hawes <me@timhawes.com>
+# SPDX-FileCopyrightText: 2023 Tim Hawes <me@timhawes.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -6,10 +6,12 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+
+from .models import GroupOwnership
 
 
 @login_required
@@ -40,26 +42,43 @@ def groupadmin_list(request):
 def groupadmin_view(request, group_name):
     group = request.user.groupownerships.get(group__name=group_name).group
 
-    new_users = {}
+    new_members = {}
     for user in get_user_model().objects.filter(is_active=True):
-        new_users[user.username] = user.id
+        new_members[user.username] = user.id
+    new_owners = new_members.copy()
 
-    users = {}
+    members = {}
     for user in group.user_set.all():
         try:
-            del new_users[user.username]
+            del new_members[user.username]
         except KeyError:
             pass
-        users[user.username] = {
+        members[user.username] = {
+            "id": user.id,
+            "username": user.username,
+        }
+
+    owners = {}
+    for groupownership in group.owners.all():
+        user = groupownership.user
+        try:
+            del new_owners[user.username]
+        except KeyError:
+            pass
+        owners[user.username] = {
             "id": user.id,
             "username": user.username,
         }
 
     context = {
         "group": group,
-        "users": [users[username] for username in sorted(users.keys())],
-        "new_users": [
-            (new_users[username], username) for username in sorted(new_users.keys())
+        "members": [members[username] for username in sorted(members.keys())],
+        "owners": [owners[username] for username in sorted(owners.keys())],
+        "new_members": [
+            (new_members[username], username) for username in sorted(new_members.keys())
+        ],
+        "new_owners": [
+            (new_owners[username], username) for username in sorted(new_owners.keys())
         ],
     }
 
@@ -68,21 +87,50 @@ def groupadmin_view(request, group_name):
 
 @login_required
 @require_POST
-def groupadmin_add_user(request, group_name):
+def groupadmin_add_member(request, group_name):
     group = request.user.groupownerships.get(group__name=group_name).group
     user = get_user_model().objects.get(id=int(request.POST["user_id"]))
     group.user_set.add(user)
-    messages.add_message(request, messages.SUCCESS, f"User {user.username} added.")
+    messages.add_message(request, messages.SUCCESS, f"Member {user.username} added.")
     return HttpResponseRedirect(reverse("groupadmin_view", args=[group_name]))
 
 
 @login_required
 @require_POST
-def groupadmin_remove_user(request, group_name, user_id):
+def groupadmin_remove_member(request, group_name, user_id):
     group = request.user.groupownerships.get(group__name=group_name).group
     user = get_user_model().objects.get(id=user_id)
     group.user_set.remove(user)
-    messages.add_message(request, messages.SUCCESS, f"User {user.username} removed.")
+    messages.add_message(request, messages.SUCCESS, f"Member {user.username} removed.")
+    return HttpResponseRedirect(reverse("groupadmin_view", args=[group_name]))
+
+
+@login_required
+@require_POST
+def groupadmin_add_owner(request, group_name):
+    group = request.user.groupownerships.get(group__name=group_name).group
+    user = get_user_model().objects.get(id=int(request.POST["user_id"]))
+    if request.user == user:
+        # this condition should never match, added just-in-case
+        return HttpResponseForbidden("Cannot add self")
+    if not group.properties.owners_manage_owners:
+        return HttpResponseForbidden("Cannot manage owners")
+    GroupOwnership.objects.create(group=group, user=user)
+    messages.add_message(request, messages.SUCCESS, f"Owner {user.username} added.")
+    return HttpResponseRedirect(reverse("groupadmin_view", args=[group_name]))
+
+
+@login_required
+@require_POST
+def groupadmin_remove_owner(request, group_name, user_id):
+    group = request.user.groupownerships.get(group__name=group_name).group
+    user = get_user_model().objects.get(id=user_id)
+    if request.user == user:
+        return HttpResponseForbidden("Cannot remove self")
+    if not group.properties.owners_manage_owners:
+        return HttpResponseForbidden("Cannot manage owners")
+    GroupOwnership.objects.get(group=group, user=user).delete()
+    messages.add_message(request, messages.SUCCESS, f"Owner {user.username} removed.")
     return HttpResponseRedirect(reverse("groupadmin_view", args=[group_name]))
 
 
