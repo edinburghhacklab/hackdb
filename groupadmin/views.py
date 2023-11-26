@@ -44,7 +44,11 @@ def groupadmin_view(request, group_name):
 
     new_members = {}
     for user in get_user_model().objects.filter(is_active=True):
-        new_members[user.username] = user.id
+        new_members[user.username] = {
+            "id": user.id,
+            "username": user.username,
+            "full_name": user.get_full_name(),
+        }
     new_owners = new_members.copy()
 
     members = {}
@@ -56,6 +60,7 @@ def groupadmin_view(request, group_name):
         members[user.username] = {
             "id": user.id,
             "username": user.username,
+            "full_name": user.get_full_name(),
         }
 
     owners = {}
@@ -68,6 +73,7 @@ def groupadmin_view(request, group_name):
         owners[user.username] = {
             "id": user.id,
             "username": user.username,
+            "full_name": user.get_full_name(),
         }
 
     context = {
@@ -75,10 +81,12 @@ def groupadmin_view(request, group_name):
         "members": [members[username] for username in sorted(members.keys())],
         "owners": [owners[username] for username in sorted(owners.keys())],
         "new_members": [
-            (new_members[username], username) for username in sorted(new_members.keys())
+            (new_members[username]["id"], new_members[username])
+            for username in sorted(new_members.keys())
         ],
         "new_owners": [
-            (new_owners[username], username) for username in sorted(new_owners.keys())
+            (new_owners[username]["id"], new_owners[username])
+            for username in sorted(new_owners.keys())
         ],
     }
 
