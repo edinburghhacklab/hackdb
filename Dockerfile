@@ -16,8 +16,7 @@ COPY . ./
 
 ENV DJANGO_SETTINGS_MODULE=hackdb.settings_docker
 
-RUN rm -f db.sqlite3 local_settings.py settings_local.py \
-    && useradd django \
+RUN useradd django \
     && python manage.py check \
     && python manage.py makemigrations
 
