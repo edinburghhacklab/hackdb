@@ -17,6 +17,10 @@ requests = "*"
 gunicorn = "*"
 tabulate = "*"
 
+# django-countries requires pkg_resources from setuptools
+# https://github.com/SmileyChris/django-countries/issues/442
+setuptools = "*"
+
 [dev-packages]
 
 [requires]
