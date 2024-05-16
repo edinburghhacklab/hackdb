@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 django = "==4.*"
-django-allauth = "*"
+django-allauth = {extras = ["socialaccount"], version = "*"}
 django-bootstrap5 = "*"
 django-countries = "*"
 django-phonenumber-field = {extras = ["phonenumbers"], version = "*"}
