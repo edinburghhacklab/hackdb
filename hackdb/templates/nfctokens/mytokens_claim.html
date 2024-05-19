@@ -6,17 +6,19 @@
     {% if tokens %}
     <p>
       Select your new token or card from the list below. If you don't see it
-      or aren't sure then swipe wipe your new token on one of the doors, and
+      or aren't sure then swipe your new token on one of the readers, and
       select <em>Refresh</em>.
     </p>
     <table class="table table-striped">
       <tr>
         <th>Time</th>
+        <th>Location</th>
         <th>UID</th>
       </tr>
       {% for token in tokens %}
         <tr>
           <td>{{ token.last_seen|time:"H:i:s" }}</td>
+          <td>{{ token.last_location }}</td>
           <td><a href="{% url 'nfctokens_mytokens_add_uid' token.uid %}">{{ token.uid }}</a></td>
         </tr>
       {% endfor %}
