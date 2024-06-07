@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Tim Hawes <me@timhawes.com>
+# SPDX-FileCopyrightText: 2022-2024 Tim Hawes <me@timhawes.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -9,5 +9,5 @@ from .models import APIKey
 
 @admin.register(APIKey)
 class APIKeyAdmin(admin.ModelAdmin):
-    list_display = ("key", "description", "enabled", "expires")
-    list_display_links = ("key",)
+    list_display = ("uuid", "description", "enabled", "expires")
+    list_display_links = ("uuid",)

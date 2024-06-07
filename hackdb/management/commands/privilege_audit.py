@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Tim Hawes <me@timhawes.com>
+# SPDX-FileCopyrightText: 2022-2024 Tim Hawes <me@timhawes.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -42,7 +42,7 @@ class Command(BaseCommand):
             for permission in apikey.permissions.all():
                 output.append(str(permission))
             if output:
-                print(f"apikey {apikey.key} {apikey.description}")
+                print(f"apikey {apikey} {apikey.description}")
                 for line in output:
                     print(f"- {line}")
                 print()

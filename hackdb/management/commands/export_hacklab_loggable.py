@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Tim Hawes <me@timhawes.com>
+# SPDX-FileCopyrightText: 2022-2024 Tim Hawes <me@timhawes.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -126,7 +126,7 @@ class Command(BaseCommand):
         for group in Group.objects.order_by("name"):
             output["groups"].append(group_to_dict(group))
 
-        for apikey in APIKey.objects.order_by("key"):
+        for apikey in APIKey.objects.order_by("uuid"):
             output["apikeys"].append(apikey_to_dict(apikey))
 
         json.dump(output, sys.stdout, indent=2, sort_keys=True)
