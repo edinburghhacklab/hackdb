@@ -34,6 +34,15 @@ def groupadmin_list(request):
         if group.name not in groups:
             groups[group.name] = {"object": group}
 
+    # groups that are configured to advertise owners
+    for group in Group.objects.filter(properties__advertise_owners=True):
+        if group.name not in groups:
+            groups[group.name] = {"object": group}
+        if group.owners.count() > 0:
+            groups[group.name]["owners_text"] = ", ".join(
+                sorted(owner.user.get_full_name() for owner in group.owners.all())
+            )
+
     context = {"groups": [groups[name] for name in sorted(groups.keys())]}
     return render(request, "groupadmin/groups.html", context)
 

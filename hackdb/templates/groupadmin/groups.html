@@ -19,11 +19,16 @@
     {% for group in groups %}
       <tr>
         <td>{{ group.object.name }}</td>
-        <td>{{ group.object.properties.description }}</td>
+        <td>
+          {{ group.object.properties.description }}
+          {% if group.owners_text %}
+          <i class="bi bi-info-circle" style="color:blue" data-bs-toggle="tooltip" data-bs-title="Managed by {{ group.owners_text }}"></i>
+          {% endif %}
+        </td>
         <td>{% if group.member %}<i class="bi-check-lg" data-bs-toggle="tooltip" title="You are a member of this group."></i>{% endif %}</td>
         <td>
           {% if group.owner %}
-          <a href="{% url 'groupadmin_view' group.object.name %}" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="You are an owner of this group.">admin</a>
+          <a href="{% url 'groupadmin_view' group.object.name %}" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="Manage this group.">admin</a>
           {% endif %}
           {% if group.object.properties.self_service %}
           {% if group.member %}
@@ -44,5 +49,10 @@
     </tbody>
   </table>
 </div>
+
+<script type="module">
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+</script>
 
 {% endblock %}
