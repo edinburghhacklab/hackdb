@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 Tim Hawes <me@timhawes.com>
+# SPDX-FileCopyrightText: 2023-2024 Tim Hawes <me@timhawes.com>
 #
 # SPDX-License-Identifier: MIT
 
