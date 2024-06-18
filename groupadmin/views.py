@@ -40,7 +40,10 @@ def groupadmin_list(request):
             groups[group.name] = {"object": group}
         if group.owners.count() > 0:
             groups[group.name]["owners_text"] = ", ".join(
-                sorted(owner.user.get_full_name() for owner in group.owners.all())
+                sorted(
+                    owner.user.get_full_name() or owner.user.get_username()
+                    for owner in group.owners.all()
+                )
             )
 
     context = {"groups": [groups[name] for name in sorted(groups.keys())]}
