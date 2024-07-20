@@ -84,7 +84,7 @@ def sync_group(group, dry_run=False):
         users_base_dn=settings.LDAPSYNC_USERS_BASE_DN,
     )
     if settings.LDAPSYNC_POSIX_GROUPS_BASE_DN and group.posix:
-        posix_dn, posix_entry = serializers.posix_group_serializer(
+        posix_dn, posix_entry = serializers.serialize_posixgroup(
             group, settings.LDAPSYNC_POSIX_GROUPS_BASE_DN
         )
     server = LDAP(dry_run=dry_run)
