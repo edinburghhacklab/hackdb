@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM python:3.12
+FROM python:3.13
 
 WORKDIR /usr/src/app
 
