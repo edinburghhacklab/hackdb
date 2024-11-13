@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Tim Hawes <me@timhawes.com>
+# SPDX-FileCopyrightText: 2022-2024 Tim Hawes <me@timhawes.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -187,8 +187,10 @@ class MembershipTerm(models.Model):
     DISCOUNTED = 1
     FREE = 2
     REMOTE = 3
+    REGULAR2024 = 4
     MTYPE_CHOICES = [
-        (REGULAR, "Regular"),
+        (REGULAR2024, "Regular"),
+        (REGULAR, "Regular (minimum £25)"),
         (DISCOUNTED, "Discounted"),
         (FREE, "Free"),
         (REMOTE, "Remote"),
