@@ -132,12 +132,12 @@ class Member(models.Model):
             members_group = Group.objects.get(name="members")
             if new_status in [self.MEMBER, self.SUSPENDED, self.LEAVING]:
                 # is member
-                if not self.user.groups.contains(members_group):
-                    self.user.groups.add(members_group)
+                if not members_group.user_set.contains(self.user):
+                    members_group.user_set.add(self.user)
             else:
                 # not member
-                if self.user.groups.contains(members_group):
-                    self.user.groups.remove(members_group)
+                if members_group.user_set.contains(self.user):
+                    members_group.user_set.remove(self.user)
         except Group.DoesNotExist:
             print(f"members group does not exist, ignoring")
 

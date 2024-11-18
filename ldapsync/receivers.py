@@ -68,6 +68,11 @@ def sync_ldap_posix_group(sender, instance, **kwargs):
 
 @receiver(m2m_changed, sender=Group.user_set.through)
 def sync_ldap_group_m2m(sender, instance, *, action=None, **kwargs):
+    if not isinstance(instance, Group):
+        logger.warning(
+            f"sync_ldap_group_m2m called with instance of type {type(instance)}"
+        )
+        return
     if action in ["post_add", "post_remove"]:
         try:
             logger.info(f"ldapsync group {instance} (for membership)")
