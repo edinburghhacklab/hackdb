@@ -102,6 +102,22 @@ class Member(models.Model):
                     self.membership_number = highest_membership_number + 1
         self.fixup()
 
+    @classmethod
+    def fixup_all(cls):
+        # run the fixup method for all members
+        for member in cls.objects.all():
+            if member.fixup():
+                member.save()
+
+        # remove users from the group if they do not have a member object
+        try:
+            members_group = Group.objects.get(name="members")
+            for user in members_group.user_set.filter(member__isnull=True):
+                print(f"fix {user}: no member relation")
+                members_group.user_set.remove(user)
+        except Group.DoesNotExist:
+            print(f"members group does not exist, ignoring")
+
     # called automatically to make routine changes to the object
     def fixup(self):
         old_status = self.membership_status
