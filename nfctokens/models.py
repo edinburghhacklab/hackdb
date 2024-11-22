@@ -45,7 +45,7 @@ class NFCToken(models.Model):
             ),
             # Common fixed UIDs, not unique
             RegexValidator(
-                regex=r"^(00000000|01020304|04ffffff|12345678|ffffffff)$",
+                regex=r"^(0{8}|0{14}|0{20}|f{8}|f{14}|f{20}|01020304|01020304050607|04ffffff|12345678)$",
                 message="This is a common fixed/non-unique UID which cannot be used for authentication",
                 inverse_match=True,
             ),
