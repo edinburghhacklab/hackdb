@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import datetime
+import re
 
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
@@ -41,6 +42,12 @@ class NFCToken(models.Model):
             RegexValidator(
                 regex=r"^\s*08[0-9a-fA-F]{6}\s*$",
                 message="This is a randomly-generated UID which cannot be used for authentication",
+                inverse_match=True,
+            ),
+            # Common fixed UIDs, not unique
+            RegexValidator(
+                regex=r"^(00000000|01020304|04ffffff|12345678|ffffffff)$",
+                message="This is a common fixed/non-unique UID which cannot be used for authentication",
                 inverse_match=True,
             ),
             # Invalid due to cascading rules (byte 0 of a 4-byte UID cannot be 0x88)
