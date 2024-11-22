@@ -36,11 +36,11 @@ class NFCToken(models.Model):
         verbose_name="UID",
         validators=[
             RegexValidator(
-                regex=r"^\s*([0-9a-fA-F]{8}|[0-9a-fA-F]{14}|[0-9a-fA-F]{20})\s*$",
+                regex=r"^([0-9a-f]{8}|[0-9a-f]{14}|[0-9a-f]{20})$",
                 message="Enter a valid UID of 8, 14 or 20 hexadecimal digits",
             ),
             RegexValidator(
-                regex=r"^\s*08[0-9a-fA-F]{6}\s*$",
+                regex=r"^08[0-9a-f]{6}$",
                 message="This is a randomly-generated UID which cannot be used for authentication",
                 inverse_match=True,
             ),
@@ -52,19 +52,19 @@ class NFCToken(models.Model):
             ),
             # Invalid due to cascading rules (byte 0 of a 4-byte UID cannot be 0x88)
             RegexValidator(
-                regex=r"^\s*88[0-9a-fA-F]{6}\s*$",
+                regex=r"^88[0-9a-f]{6}$",
                 message="This is an invalid UID (contains a cascade tag)",
                 inverse_match=True,
             ),
             # Invalid due to cascading rules (byte 3 of a 7-byte UID cannot be 0x88)
             RegexValidator(
-                regex=r"^\s*[0-9a-fA-F]{6}88[0-9a-fA-F]{6}\s*$",
+                regex=r"^[0-9a-f]{6}88[0-9a-f]{6}$",
                 message="This is an invalid UID (contains a cascade tag)",
                 inverse_match=True,
             ),
             # Invalid due to cascading rules (byte 3 of a 10-byte UID cannot be 0x88)
             RegexValidator(
-                regex=r"^\s*[0-9a-fA-F]{6}88[0-9a-fA-F]{12}\s*$",
+                regex=r"^[0-9a-f]{6}88[0-9a-f]{12}$",
                 message="This is an invalid UID (contains a cascade tag)",
                 inverse_match=True,
             ),
