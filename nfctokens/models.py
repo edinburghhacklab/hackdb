@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 import datetime
-import re
 
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
