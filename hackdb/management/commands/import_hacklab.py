@@ -31,7 +31,7 @@ class Command(BaseCommand):
             print("Run with --yes flag to confirm.")
             return
 
-        with open(options["filename"][0], "r") as fh:
+        with open(options["filename"][0]) as fh:
             data = json.load(fh)
 
         # new objects referenced by old IDs

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Tim Hawes <me@timhawes.com>
+# SPDX-FileCopyrightText: 2022-2024 Tim Hawes <me@timhawes.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -88,12 +88,12 @@ def mytokens_add(request, uid=None):
     else:
         form = TokenAddForm(initial={"uid": uid})
         if uid is None:
-            form.fields[
-                "uid"
-            ].help_text = "The serial number or UID of your token. This may be read using an app on some Android phones."
-        form.fields[
-            "description"
-        ].help_text = 'This is to help you identify the token if you have more than one. For example, "blue keyfob".'
+            form.fields["uid"].help_text = (
+                "The serial number or UID of your token. This may be read using an app on some Android phones."
+            )
+        form.fields["description"].help_text = (
+            'This is to help you identify the token if you have more than one. For example, "blue keyfob".'
+        )
     context = {"form": form}
     return render(request, "nfctokens/mytokens_add.html", context)
 
