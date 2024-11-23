@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import (
     login_required,
     permission_required,
 )
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.forms.widgets import TextInput
 from django.http import HttpResponseRedirect, JsonResponse
@@ -186,23 +187,29 @@ def token_sighting(token, location, authorized, type_="unknown", timestamp=None)
     if timestamp is None:
         timestamp = timezone.now()
 
-    token.last_seen = timestamp
-    token.last_location = location
-    token.full_clean()
-    token.save()
+    uid = token.uid
+
+    try:
+        token.last_seen = timestamp
+        token.last_location = location
+        token.full_clean()
+        token.save()
+    except ValidationError:
+        token = None
 
     tokenlog = NFCTokenLog()
     tokenlog.ltype = type_
     tokenlog.timestamp = timestamp
-    tokenlog.uid = token.uid
+    tokenlog.uid = uid
     tokenlog.location = location or ""
     tokenlog.authorized = authorized
-    tokenlog.token = token
-    tokenlog.token_description = tokenlog.token.description
-    tokenlog.user = tokenlog.token.user
-    if tokenlog.user:
-        tokenlog.username = tokenlog.user.username
-        tokenlog.name = tokenlog.user.get_full_name()
+    if token:
+        tokenlog.token = token
+        tokenlog.token_description = token.description
+        if token.user:
+            tokenlog.user = token.user
+            tokenlog.username = token.user.username
+            tokenlog.name = token.user.get_full_name()
     tokenlog.full_clean()
     tokenlog.save()
 
