@@ -277,7 +277,6 @@ def nfc_token_auth(request):
     user_groups = get_groups(token.user)
     matched_groups = []
     if required_groups:
-        print(required_groups)
         found = False
         for group in user_groups:
             if group in required_groups:

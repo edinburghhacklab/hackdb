@@ -52,7 +52,6 @@ class APIUser(AnonymousUser):
             "content_type__app_label", "codename"
         ).order_by()
         setattr(self, "_permissions", {f"{ct}.{name}" for ct, name in perms})
-        print(self)
 
     def get_user_permissions(self):
         return self._permissions
