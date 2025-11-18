@@ -1,0 +1,28 @@
+[project]
+name = ""
+version = "0.0.1"
+requires-python = ">=3.10, <3.14"
+dependencies = [
+    "django==5.2.*",
+    "django-allauth[socialaccount]",
+    "django-bootstrap5",
+    "django-countries",
+    "django-phonenumber-field[phonenumbers]",
+    "django-extensions",
+    "passlib",
+    "ldif",
+    "ldap3",
+    "requests",
+    "gunicorn",
+    "tabulate",
+]
+
+[dependency-groups]
+dev = []
+
+[tool.uv]
+package = false
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
