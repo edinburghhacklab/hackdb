@@ -4,7 +4,7 @@
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v5.0.0
+  rev: v6.0.0
   hooks:
   - id: trailing-whitespace
     exclude: ^requirements\.txt$
@@ -12,14 +12,14 @@ repos:
   - id: check-added-large-files
   - id: check-ast
 - repo: https://github.com/psf/black
-  rev: 24.10.0
+  rev: 25.11.0
   hooks:
   - id: black
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.19.0
+  rev: v3.21.1
   hooks:
   - id: pyupgrade
 - repo: https://github.com/astral-sh/uv-pre-commit
-  rev: 0.8.24
+  rev: 0.9.10
   hooks:
     - id: uv-export
