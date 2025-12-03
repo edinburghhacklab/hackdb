@@ -4,6 +4,9 @@
 
 import base64
 
+from django.db.models import Q
+from django.utils import timezone
+
 from .models import APIKey, APIUser
 
 
@@ -12,11 +15,16 @@ class APIKeyMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        active_apikeys = APIKey.objects.filter(
+            Q(expires__isnull=True) | Q(expires__gt=timezone.now()),
+            enabled=True,
+        )
+
         if "HTTP_AUTHORIZATION" in request.META:
             auth_type, credentials = request.META["HTTP_AUTHORIZATION"].split(" ", 1)
             if auth_type.lower() == "bearer":
                 try:
-                    apikey = APIKey.objects.get(key=credentials)
+                    apikey = active_apikeys.get(key=credentials)
                     request.user = APIUser(apikey)
                     request._dont_enforce_csrf_checks = True
                     return self.get_response(request)
@@ -27,7 +35,7 @@ class APIKeyMiddleware:
                     base64.b64decode(credentials).decode().split(":", 1)
                 )
                 try:
-                    apikey = APIKey.objects.get(key=password)
+                    apikey = active_apikeys.get(key=password)
                     request.user = APIUser(apikey)
                     request._dont_enforce_csrf_checks = True
                     return self.get_response(request)
@@ -36,7 +44,7 @@ class APIKeyMiddleware:
 
         if "X-API-Token" in request.headers:
             try:
-                apikey = APIKey.objects.get(key=request.headers["X-API-Token"])
+                apikey = active_apikeys.get(key=request.headers["X-API-Token"])
                 request.user = APIUser(apikey)
                 request._dont_enforce_csrf_checks = True
                 return self.get_response(request)
