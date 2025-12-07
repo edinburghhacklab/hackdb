@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 FROM python:3.14
-COPY --from=ghcr.io/astral-sh/uv:0.9.10 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.9.16 /uv /uvx /bin/
 
 COPY . /app
 WORKDIR /app

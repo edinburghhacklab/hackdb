@@ -16,10 +16,10 @@ repos:
   hooks:
   - id: black
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.21.1
+  rev: v3.21.2
   hooks:
   - id: pyupgrade
 - repo: https://github.com/astral-sh/uv-pre-commit
-  rev: 0.9.10
+  rev: 0.9.16
   hooks:
     - id: uv-export
