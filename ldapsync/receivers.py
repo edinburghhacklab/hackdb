@@ -14,7 +14,6 @@ from posixusers.models import PosixGroup, PosixUser, SSHKey
 
 from .utils import sync_group, sync_user
 
-
 logger = logging.getLogger(__name__)
 
 

@@ -8,7 +8,6 @@ import unittest
 
 from .hashers import SHA256PasswordHasher, SHA512PasswordHasher
 
-
 # Test data from https://akkadia.org/drepper/SHA-crypt.txt
 SHA256_TEST_DATA = [
     [
