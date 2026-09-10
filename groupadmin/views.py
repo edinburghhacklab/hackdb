@@ -90,15 +90,19 @@ def groupadmin_view(request, group_name):
 
     context = {
         "group": group,
-        "members": [members[username] for username in sorted(members.keys())],
-        "owners": [owners[username] for username in sorted(owners.keys())],
+        "members": [
+            members[username] for username in sorted(members.keys(), key=str.casefold)
+        ],
+        "owners": [
+            owners[username] for username in sorted(owners.keys(), key=str.casefold)
+        ],
         "new_members": [
             (new_members[username]["id"], new_members[username])
-            for username in sorted(new_members.keys())
+            for username in sorted(new_members.keys(), key=str.casefold)
         ],
         "new_owners": [
             (new_owners[username]["id"], new_owners[username])
-            for username in sorted(new_owners.keys())
+            for username in sorted(new_owners.keys(), key=str.casefold)
         ],
     }
 
