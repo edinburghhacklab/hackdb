@@ -10,6 +10,12 @@ from django.db import models
 from django.utils import timezone
 
 
+def normalize_uid(value):
+    if value is None:
+        return value
+    return value.strip().lower()
+
+
 class UnassignedTokenManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(user__isnull=True)
@@ -96,8 +102,7 @@ class NFCToken(models.Model):
         return self.uid
 
     def clean(self):
-        if self.uid is not None:
-            self.uid = self.uid.strip().lower()
+        self.uid = normalize_uid(self.uid)
 
 
 class NFCTokenLog(models.Model):

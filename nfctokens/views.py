@@ -20,7 +20,7 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_POST
 
-from .models import NFCToken, NFCTokenLog
+from .models import NFCToken, NFCTokenLog, normalize_uid
 
 
 def too_many_enabled_tokens(user):
@@ -40,6 +40,12 @@ class TokenAddForm(ModelForm):
         model = NFCToken
         fields = ["uid", "description"]
 
+    def clean_uid(self):
+        return normalize_uid(self.cleaned_data["uid"])
+
+    def clean_description(self):
+        return self.cleaned_data["description"].strip()
+
 
 class TokenEditForm(ModelForm):
     class Meta:
@@ -48,11 +54,14 @@ class TokenEditForm(ModelForm):
         widgets = {"uid": TextInput(attrs={"readonly": "true"})}
 
     def clean_uid(self):
-        if self.cleaned_data["uid"] != self.instance.uid:
+        uid = normalize_uid(self.cleaned_data["uid"])
+        if uid != self.instance.uid:
             # don't allow uid to be changed
             return self.instance.uid
-        else:
-            return self.cleaned_data["uid"]
+        return uid
+
+    def clean_description(self):
+        return self.cleaned_data["description"].strip()
 
 
 @login_required
