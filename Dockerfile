@@ -1,9 +1,9 @@
-# SPDX-FileCopyrightText: 2024-2025 Tim Hawes <me@timhawes.com>
+# SPDX-FileCopyrightText: 2024-2026 Tim Hawes <me@timhawes.com>
 #
 # SPDX-License-Identifier: CC0-1.0
 
 FROM python:3.14
-COPY --from=ghcr.io/astral-sh/uv:0.11.17 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.12.21 /uv /uvx /bin/
 
 COPY . /app
 WORKDIR /app
